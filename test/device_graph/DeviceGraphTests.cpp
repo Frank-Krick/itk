@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_SUITE(DeviceGraph)
         auto targetId = deviceGraph->addDevice(targetDevice);
         deviceGraph->connect(sourceId, targetId);
         BOOST_CHECK(deviceGraph->isConnected(sourceId, targetId));
-        BOOST_CHECK(deviceGraph->isConnected(targetId, sourceId) == false);
+        BOOST_CHECK(!deviceGraph->isConnected(targetId, sourceId));
     }
 
     BOOST_AUTO_TEST_CASE( connect_audio_devices_should_only_connect_audio_devices ) {
@@ -47,8 +47,8 @@ BOOST_AUTO_TEST_SUITE(DeviceGraph)
         auto sourceId = deviceGraph->addDevice(sourceDevice);
         auto targetId = deviceGraph->addDevice(targetDevice);
         BOOST_CHECK_THROW(deviceGraph->connect(sourceId, targetId), DeviceTypeMismatch);
-        BOOST_CHECK(deviceGraph->isConnected(sourceId, targetId) == false);
-        BOOST_CHECK(deviceGraph->isConnected(targetId, sourceId) == false);
+        BOOST_CHECK(!deviceGraph->isConnected(sourceId, targetId));
+        BOOST_CHECK(!deviceGraph->isConnected(targetId, sourceId));
     }
 
     BOOST_AUTO_TEST_CASE( connect_control_device ) {
@@ -63,8 +63,8 @@ BOOST_AUTO_TEST_SUITE(DeviceGraph)
         auto sourceId = deviceGraph->addDevice(sourceDevice);
         auto targetId = deviceGraph->addDevice(targetDevice);
         deviceGraph->connect(sourceId, targetId, 3);
-        BOOST_CHECK(deviceGraph->isConnected(sourceId, targetId) == false);
-        BOOST_CHECK(deviceGraph->isConnected(targetId, sourceId) == false);
+        BOOST_CHECK(!deviceGraph->isConnected(sourceId, targetId));
+        BOOST_CHECK(!deviceGraph->isConnected(targetId, sourceId));
     }
 
 BOOST_AUTO_TEST_SUITE_END()

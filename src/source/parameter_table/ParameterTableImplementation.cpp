@@ -4,9 +4,6 @@
 
 #include "ParameterTableImplementation.h"
 
-#include <tuple>
-#include <device_graph/DeviceGraph.h>
-
 namespace itk {
 
     using namespace std;

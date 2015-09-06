@@ -3,8 +3,6 @@
 #include <device/Device.h>
 #include <device/DeviceFactory.h>
 
-#include <algorithm>
-
 using namespace itk;
 using namespace std;
 

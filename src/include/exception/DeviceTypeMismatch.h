@@ -31,7 +31,6 @@ namespace itk {
         DeviceType targetType = DeviceType::AUDIO;
         ConnectionType connectionType = ConnectionType::CONTROL;
 
-        std::string errorMessage();
     };
 
 }
