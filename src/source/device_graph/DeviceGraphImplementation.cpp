@@ -5,6 +5,8 @@
 #include "DeviceGraphImplementation.h"
 
 #include <exception/DeviceTypeMismatch.h>
+#include <exception/DeviceMissing.h>
+#include <exception/DeviceParameterMissing.h>
 
 namespace itk {
 
@@ -20,6 +22,7 @@ namespace itk {
         deviceTable[deviceId] = deviceWrapper;
         deviceIdVertexMap[deviceId] = vertex;
         parameterTable->registerDeviceParameters(deviceId, *device);
+        graph[vertex].deviceId = deviceId;
         return deviceId;
     }
 
@@ -29,6 +32,7 @@ namespace itk {
         remove_vertex(vertex, graph);
         deviceTable.erase(deviceId);
         deviceIdVertexMap.erase(deviceId);
+        parameterTable->unregisterDeviceParameters(deviceId);
     }
 
     void DeviceGraphImplementation::connect(IndexType sourceId, IndexType targetId) {
@@ -45,7 +49,10 @@ namespace itk {
                     ConnectionType::CONTROL);
 
         } else {
-            add_edge(sourceVertex, targetVertex, graph);
+            typename Graph::edge_descriptor edge;
+            bool isNewEdge;
+            tie(edge, isNewEdge) = add_edge(sourceVertex, targetVertex, graph);
+            graph[edge].type = ConnectionType::AUDIO;
         }
     }
 
@@ -53,6 +60,21 @@ namespace itk {
                                             IndexType targetId,
                                             IndexType parameterId) {
 
+        auto sourceType = deviceTable.at(sourceId).device->deviceType();
+        auto targetType = deviceTable.at(targetId).device->deviceType();
+        if (sourceType == DeviceType::AUDIO)
+            throw DeviceTypeMismatch(sourceType, targetType, ConnectionType::CONTROL);
+
+        if (!parameterTable->hasParameter(targetId, parameterId))
+            throw DeviceParameterMissing(targetId, parameterId);
+
+        auto sourceVertex = vertexFromDeviceId(sourceId);
+        auto targetVertex = vertexFromDeviceId(targetId);
+        typename Graph::edge_descriptor edge;
+        bool isNewEdge;
+        tie(edge, isNewEdge) = add_edge(sourceVertex, targetVertex, graph);
+        graph[edge].type = ConnectionType::CONTROL;
+        graph[edge].parameterId = parameterId;
     }
 
     void DeviceGraphImplementation::disconnect(IndexType sourceId, IndexType targetId) {
@@ -64,7 +86,20 @@ namespace itk {
         auto sourceVertex = vertexFromDeviceId(sourceId);
         auto targetVertex = vertexFromDeviceId(targetId);
         for (tie(ei, ei_end) = out_edges(sourceVertex, graph); ei != ei_end; ei++) {
-            if (target(*ei, graph) == targetVertex) return true;
+            if (graph[*ei].type == ConnectionType::AUDIO &&
+                target(*ei, graph) == targetVertex) return true;
+        }
+        return false;
+    }
+
+    bool DeviceGraphImplementation::isConnected(IndexType sourceId, IndexType targetId, IndexType parameterId) {
+        typename Graph::out_edge_iterator ei, ei_end;
+        auto sourceVertex = vertexFromDeviceId(sourceId);
+        auto targetVertex = vertexFromDeviceId(targetId);
+        for (tie(ei, ei_end) = out_edges(sourceVertex, graph); ei != ei_end; ei++) {
+            if (graph[*ei].type == ConnectionType::CONTROL &&
+                target(*ei, graph) == targetVertex &&
+                graph[*ei].parameterId == parameterId) return true;
         }
         return false;
     }
@@ -92,16 +127,10 @@ namespace itk {
         return stream.str();
     }
 
-    DeviceGraphImplementation::~DeviceGraphImplementation() {
-
-    }
-
-
     DeviceGraphImplementation::Vertex DeviceGraphImplementation::vertexFromDeviceId(int deviceId) {
         return deviceIdVertexMap.at(deviceId);
     }
 
-    bool DeviceGraphImplementation::isConnected(IndexType sourceId, IndexType targetTd, IndexType parameterId) {
-        return true;
-    }
+    DeviceGraphImplementation::~DeviceGraphImplementation() {}
+
 }

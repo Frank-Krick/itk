@@ -7,7 +7,7 @@ set(itk_VERSION_MINOR 1)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y")
 
 include_directories(
-        "/Users/frank/Development/c++/libraries/boost_1_59_0"
+        /Users/frank/Development/c++/libraries/boost_1_59_0
         src/include)
 
 set(SOURCE_FILES
@@ -32,7 +32,11 @@ set(SOURCE_FILES
         src/include/exception/DeviceTypeMismatch.h
         src/source/device/Device.cpp
         src/source/device_graph/DeviceGraph.cpp
-        src/include/Typedef.h)
+        src/include/Typedef.h
+        src/source/exception/DeviceParameterMissing.cpp
+        src/include/exception/DeviceParameterMissing.h
+        src/source/exception/DeviceMissing.cpp
+        src/include/exception/DeviceMissing.h)
 
 set(TEST_FILES
         test/device_graph/DeviceGraphTests.cpp

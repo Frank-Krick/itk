@@ -7,6 +7,7 @@
 #include <device/DeviceFactory.h>
 #include <device_graph/DeviceGraphFactory.h>
 #include <exception/DeviceTypeMismatch.h>
+#include <exception/DeviceParameterMissing.h>
 
 using namespace itk;
 
@@ -52,13 +53,13 @@ BOOST_AUTO_TEST_SUITE(DeviceGraph)
     }
 
     BOOST_AUTO_TEST_CASE( connect_control_device ) {
-        auto sourceDevice = DeviceFactory::createDevice((DeviceType::CONTROL));
-        auto targetDevice = DeviceFactory::createDevice((DeviceType::AUDIO));
+        auto sourceDevice = DeviceFactory::createDevice(DeviceType::CONTROL);
+        auto targetDevice = DeviceFactory::createDevice(DeviceType::AUDIO);
         auto parameter = ParameterDescription();
         parameter.description = "Test";
         parameter.id = 3;
         parameter.name = "Param 3";
-        sourceDevice->addParameter(parameter);
+        targetDevice->addParameter(parameter);
         auto deviceGraph = DeviceGraphFactory::createDeviceGraph();
         auto sourceId = deviceGraph->addDevice(sourceDevice);
         auto targetId = deviceGraph->addDevice(targetDevice);
@@ -67,6 +68,29 @@ BOOST_AUTO_TEST_SUITE(DeviceGraph)
         BOOST_CHECK(!deviceGraph->isConnected(targetId, sourceId));
         BOOST_CHECK(deviceGraph->isConnected(sourceId, targetId, parameter.id));
         BOOST_CHECK(!deviceGraph->isConnected(targetId, sourceId, parameter.id));
+    }
+
+    BOOST_AUTO_TEST_CASE( connect_control_devices_should_only_connect_control_source_devices ) {
+        auto sourceDevice = DeviceFactory::createDevice(DeviceType::AUDIO);
+        auto targetDevice = DeviceFactory::createDevice(DeviceType::AUDIO);
+        auto parameter = ParameterDescription();
+        parameter.description = "Test";
+        parameter.id = 3;
+        parameter.name = "Param 3";
+        targetDevice->addParameter(parameter);
+        auto deviceGraph = DeviceGraphFactory::createDeviceGraph();
+        auto sourceId = deviceGraph->addDevice(sourceDevice);
+        auto targetId = deviceGraph->addDevice(targetDevice);
+        BOOST_CHECK_THROW(deviceGraph->connect(sourceId, targetId, parameter.id), DeviceTypeMismatch);
+    }
+
+    BOOST_AUTO_TEST_CASE( connect_control_devices_should_only_connect_to_existing_parameters ) {
+        auto sourceDevice = DeviceFactory::createDevice(DeviceType::CONTROL);
+        auto targetDevice = DeviceFactory::createDevice(DeviceType::AUDIO);
+        auto deviceGraph = DeviceGraphFactory::createDeviceGraph();
+        auto sourceId = deviceGraph->addDevice(sourceDevice);
+        auto targetId = deviceGraph->addDevice(targetDevice);
+        BOOST_CHECK_THROW(deviceGraph->connect(sourceId, targetId, 6), DeviceParameterMissing);
     }
 
 BOOST_AUTO_TEST_SUITE_END()

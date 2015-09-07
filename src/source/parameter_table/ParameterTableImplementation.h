@@ -16,9 +16,9 @@ namespace itk {
     class ParameterTableImplementation : public ParameterTable {
     public:
         virtual void registerDeviceParameters(IndexType deviceId, Device &device) override;
-
-
         virtual void unregisterDeviceParameters(IndexType deviceId) override;
+
+        virtual bool hasParameter(IndexType deviceId, IndexType parameterId) override;
 
     private:
         typedef std::list<ParameterDescription> ParameterList;

@@ -14,12 +14,12 @@
 
 namespace itk {
 
-    struct Vertex {
+    struct VertexData {
         IndexType deviceId = 0;
     };
 
-    struct Edge {
-        IndexType connectionId = 0;
+    struct EdgeData {
+        IndexType parameterId = 0;
         ConnectionType type = ConnectionType::AUDIO;
     };
 
@@ -37,7 +37,7 @@ namespace itk {
         virtual void connect(IndexType sourceId, IndexType targetId, IndexType parameterId);
         virtual void disconnect(IndexType sourceId, IndexType targetId) override;
         virtual bool isConnected(IndexType sourceId, IndexType targetId) override;
-        virtual bool isConnected(IndexType sourceId, IndexType targetTd, IndexType parameterId) override;
+        virtual bool isConnected(IndexType sourceId, IndexType targetId, IndexType parameterId) override;
 
         virtual DeviceGraphInstance::Ptr createInstance() override;
         virtual bool isInstanceUpToDate(DeviceGraphInstance &instance) override;
@@ -54,11 +54,12 @@ namespace itk {
                 boost::vecS,
                 boost::listS,
                 boost::bidirectionalS,
-                Vertex, Edge> Graph;
+                VertexData, EdgeData> Graph;
 
     private:
 
         typedef Graph::vertex_descriptor Vertex;
+        typedef Graph::edge_descriptor Edge;
         typedef std::unordered_map<IndexType, DeviceWrapper> DeviceTable;
         typedef std::unordered_map<IndexType, Graph::vertex_descriptor> DeviceIdVertexMap;
 

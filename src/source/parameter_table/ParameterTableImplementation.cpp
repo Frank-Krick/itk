@@ -14,9 +14,22 @@ namespace itk {
         for (tie(di, di_end) = device.availableParameters(); di != di_end; ++di) {
             deviceParameters.push_back(*di);
         }
+        parameterTable[deviceId] = deviceParameters;
     }
 
     void ParameterTableImplementation::unregisterDeviceParameters(IndexType deviceId) {
         parameterTable.erase(deviceId);
     }
+
+    bool ParameterTableImplementation::hasParameter(IndexType deviceId, IndexType parameterId) {
+        auto parameters = parameterTable.find(deviceId);
+        if (parameters == parameterTable.end()) return false;
+        auto start = parameters->second.cbegin();
+        auto end = parameters->second.cend();
+        for (auto p = start; p != end; ++p) {
+            if (p->id == parameterId) return true;
+        }
+        return false;
+    }
+
 }

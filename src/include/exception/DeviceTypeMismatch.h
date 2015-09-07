@@ -30,7 +30,6 @@ namespace itk {
         DeviceType sourceType = DeviceType::AUDIO;
         DeviceType targetType = DeviceType::AUDIO;
         ConnectionType connectionType = ConnectionType::CONTROL;
-
     };
 
 }
