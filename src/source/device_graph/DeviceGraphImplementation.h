@@ -14,6 +14,15 @@
 
 namespace itk {
 
+    struct Vertex {
+        IndexType deviceId = 0;
+    };
+
+    struct Edge {
+        IndexType connectionId = 0;
+        ConnectionType type = ConnectionType::AUDIO;
+    };
+
     class DeviceWrapper;
 
     class DeviceGraphImplementation : DeviceGraph {
@@ -28,6 +37,7 @@ namespace itk {
         virtual void connect(IndexType sourceId, IndexType targetId, IndexType parameterId);
         virtual void disconnect(IndexType sourceId, IndexType targetId) override;
         virtual bool isConnected(IndexType sourceId, IndexType targetId) override;
+        virtual bool isConnected(IndexType sourceId, IndexType targetTd, IndexType parameterId) override;
 
         virtual DeviceGraphInstance::Ptr createInstance() override;
         virtual bool isInstanceUpToDate(DeviceGraphInstance &instance) override;
@@ -43,16 +53,17 @@ namespace itk {
         typedef boost::adjacency_list<
                 boost::vecS,
                 boost::listS,
-                boost::bidirectionalS> Graph;
+                boost::bidirectionalS,
+                Vertex, Edge> Graph;
 
     private:
 
         typedef Graph::vertex_descriptor Vertex;
-        typedef std::unordered_map<Vertex, DeviceWrapper> DeviceTable;
-        typedef std::unordered_map<IndexType, Graph::vertex_descriptor> IndexMap;
+        typedef std::unordered_map<IndexType, DeviceWrapper> DeviceTable;
+        typedef std::unordered_map<IndexType, Graph::vertex_descriptor> DeviceIdVertexMap;
 
         DeviceTable deviceTable;
-        IndexMap indexMap;
+        DeviceIdVertexMap deviceIdVertexMap;
         Graph graph;
         ParameterTable::Ptr parameterTable = ParameterTable::Ptr((ParameterTable *) new ParameterTableImplementation());
 

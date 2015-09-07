@@ -65,6 +65,8 @@ BOOST_AUTO_TEST_SUITE(DeviceGraph)
         deviceGraph->connect(sourceId, targetId, 3);
         BOOST_CHECK(!deviceGraph->isConnected(sourceId, targetId));
         BOOST_CHECK(!deviceGraph->isConnected(targetId, sourceId));
+        BOOST_CHECK(deviceGraph->isConnected(sourceId, targetId, parameter.id));
+        BOOST_CHECK(!deviceGraph->isConnected(targetId, sourceId, parameter.id));
     }
 
 BOOST_AUTO_TEST_SUITE_END()

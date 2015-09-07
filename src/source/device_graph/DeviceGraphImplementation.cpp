@@ -15,9 +15,10 @@ namespace itk {
 
     IndexType DeviceGraphImplementation::addDevice(Device::Ptr device) {
         auto vertex = add_vertex(graph);
-        deviceTable[vertex] = DeviceWrapper(vertex, device);
-        auto deviceId = deviceTable[vertex].deviceId;
-        indexMap[deviceId] = vertex;
+        auto deviceWrapper = DeviceWrapper(vertex, device);
+        auto deviceId = deviceWrapper.deviceId;
+        deviceTable[deviceId] = deviceWrapper;
+        deviceIdVertexMap[deviceId] = vertex;
         parameterTable->registerDeviceParameters(deviceId, *device);
         return deviceId;
     }
@@ -26,15 +27,15 @@ namespace itk {
         auto vertex = vertexFromDeviceId(deviceId);
         clear_vertex(vertex, graph);
         remove_vertex(vertex, graph);
-        deviceTable.erase(vertex);
-        indexMap.erase(deviceId);
+        deviceTable.erase(deviceId);
+        deviceIdVertexMap.erase(deviceId);
     }
 
     void DeviceGraphImplementation::connect(IndexType sourceId, IndexType targetId) {
         auto sourceVertex = vertexFromDeviceId(sourceId);
         auto targetVertex = vertexFromDeviceId(targetId);
-        auto sourceDevice = deviceTable[sourceVertex];
-        auto targetDevice = deviceTable[targetVertex];
+        auto sourceDevice = deviceTable[sourceId];
+        auto targetDevice = deviceTable[targetId];
         if (sourceDevice.device->deviceType() != DeviceType::AUDIO ||
             targetDevice.device->deviceType() != DeviceType::AUDIO) {
 
@@ -77,8 +78,8 @@ namespace itk {
     }
 
     DeviceGraph::DeviceDescription DeviceGraphImplementation::describeDevice(IndexType deviceId) {
-        auto vertex = indexMap.at(deviceId);
-        auto device = deviceTable.at(vertex);
+        auto vertex = deviceIdVertexMap.at(deviceId);
+        auto device = deviceTable.at(deviceId);
         DeviceDescription description;
         description.name = device.name;
         description.deviceId = deviceId;
@@ -97,7 +98,10 @@ namespace itk {
 
 
     DeviceGraphImplementation::Vertex DeviceGraphImplementation::vertexFromDeviceId(int deviceId) {
-        return indexMap.at(deviceId);
+        return deviceIdVertexMap.at(deviceId);
     }
 
+    bool DeviceGraphImplementation::isConnected(IndexType sourceId, IndexType targetTd, IndexType parameterId) {
+        return true;
+    }
 }

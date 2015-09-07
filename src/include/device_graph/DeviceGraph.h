@@ -41,7 +41,7 @@ namespace itk {
         virtual void connect(IndexType sourceId, IndexType targetId, IndexType parameterId) = 0;
         virtual void disconnect(IndexType sourceId, IndexType targetId) = 0;
         virtual bool isConnected(IndexType sourceId, IndexType targetId) = 0;
-//        virtual bool isConnected(IndexType sourceId, IndexType targetTd, ParameterDescription::IndexType parameterId) = 0;
+        virtual bool isConnected(IndexType sourceId, IndexType targetTd, IndexType parameterId) = 0;
 
         virtual DeviceGraphInstance::Ptr createInstance() = 0;
         virtual bool isInstanceUpToDate(DeviceGraphInstance &instance) = 0;
