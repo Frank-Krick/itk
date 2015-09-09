@@ -36,7 +36,11 @@ set(SOURCE_FILES
         src/source/exception/DeviceParameterMissing.cpp
         src/include/exception/DeviceParameterMissing.h
         src/source/exception/DeviceMissing.cpp
-        src/include/exception/DeviceMissing.h)
+        src/include/exception/DeviceMissing.h
+        src/include/processing/generator/Generator.h
+        src/include/processing/Parameter.h
+        src/source/processing/generator/SineGenerator.cpp
+        src/source/processing/generator/SineGenerator.h)
 
 set(TEST_FILES
         test/device_graph/DeviceGraphTests.cpp

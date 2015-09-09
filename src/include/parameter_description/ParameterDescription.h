@@ -17,6 +17,8 @@ namespace itk {
         IndexType id = 0;
         std::string name;
         std::string description;
+        DataType max = 0.0;
+        DataType min = 0.0;
 
     private:
     };
