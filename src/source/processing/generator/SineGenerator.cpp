@@ -7,9 +7,13 @@ namespace itk {
 
     auto tau = 2 * M_PI;
 
-    void SineGenerator::operator () (Generator::Iterator begin, Generator::Iterator end, ParameterMap &parameter) {
+    void SineGenerator::operator () (
+            ConstIterator beginIn, ConstIterator endIn,
+            Iterator beginOut, Iterator endOut,
+            ParameterMap & parameter) {
+
         auto frequencyIterator = parameter[0].start;
-        for (auto it = begin; it != end; ++it) {
+        for (auto it = beginOut; it != endOut; ++it) {
             auto f = *frequencyIterator;
             *it = sin(tau * f * phaseOffset);
             phaseOffset++;

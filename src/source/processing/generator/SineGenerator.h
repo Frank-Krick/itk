@@ -12,7 +12,10 @@ namespace itk {
      */
     class SineGenerator : public Generator {
     public:
-        virtual void operator () (Iterator begin, Iterator end, ParameterMap &parameter) override;
+        virtual void operator () (
+                ConstIterator beginIn, ConstIterator endIn,
+                Iterator beginOut, Iterator endOut,
+                ParameterMap & parameter);
 
         virtual ParameterList parameterList() override;
 

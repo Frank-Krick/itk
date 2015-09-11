@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_SUITE(SineGeneratorTests)
         parameterBuffer.push_back(0.0);
         parameter.start = begin(parameterBuffer);
         parameterMap[0] = parameter;
-        one(begin(buffer), end(buffer), parameterMap);
+        one(end(buffer), end(buffer), begin(buffer), end(buffer), parameterMap);
         auto copyOne = clone(one);
         auto copyTwo = clone(one);
         BOOST_CHECK(*copyOne == *copyTwo);
@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_SUITE(SineGeneratorTests)
         parameterBuffer.push_back(0.0);
         parameter.start = begin(parameterBuffer);
         parameterMap[0] = parameter;
-        one(begin(buffer), end(buffer), parameterMap);
+        one(end(buffer), end(buffer), begin(buffer), end(buffer), parameterMap);
         BOOST_CHECK(one != *two);
     }
 
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_SUITE(SineGeneratorTests)
         parameter.start = begin(controlData);
         parameterMap[0] = parameter;
         auto one = SineGenerator(44100);
-        one(begin(audioData), end(audioData), parameterMap);
+        one(end(audioData), end(audioData), begin(audioData), end(audioData), parameterMap);
         auto checkData = DataBuffer(5000);
         int phaseOffset = 0;
         for (auto it = begin(checkData); it != end(checkData); ++it) {
