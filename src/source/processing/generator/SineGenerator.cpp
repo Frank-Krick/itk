@@ -8,20 +8,27 @@ namespace itk {
     auto tau = 2 * M_PI;
 
     void SineGenerator::operator () (
-            ConstIterator beginIn, ConstIterator endIn,
-            Iterator beginOut, Iterator endOut,
+            InputChannels beginIn, InputChannels endIn,
+            OutputChannels beginOut, OutputChannels endOut,
             ParameterMap & parameter) {
 
+        auto left = beginOut[0];
+        auto right = beginOut[1];
+        auto end = endOut[0];
+
         auto frequencyIterator = parameter[0].start;
-        for (auto it = beginOut; it != endOut; ++it) {
+        while (left != end) {
             auto f = *frequencyIterator;
-            *it = sin(tau * f * phaseOffset);
+            *left = sin(tau * f * phaseOffset);
+            *right = *left;
             phaseOffset++;
             frequencyIterator++;
+            left++;
+            right++;
         }
     }
 
-    Generator::ParameterList SineGenerator::parameterList() {
+    AudioFunctor::ParameterList SineGenerator::parameterList() {
         auto frequency = ParameterDescription();
         frequency.description = "Frequency of the Generator";
         frequency.id = 0;
@@ -37,20 +44,20 @@ namespace itk {
         phaseOffset = 0;
     }
 
-    Generator::Ptr SineGenerator::clone() {
+    AudioFunctor::Ptr SineGenerator::clone() {
         auto generator = new SineGenerator(sampleRate);
         generator->phaseOffset = phaseOffset;
-        return Generator::Ptr((Generator *)generator);
+        return AudioFunctor::Ptr((AudioFunctor *)generator);
     }
 
-    Generator::Ptr SineGenerator::create() {
+    AudioFunctor::Ptr SineGenerator::create() {
         auto generator = new SineGenerator(sampleRate);
-        return Generator::Ptr((Generator *)generator);
+        return AudioFunctor::Ptr((AudioFunctor *)generator);
     }
 
-    SineGenerator::SineGenerator(unsigned int sampleRate) : Generator(sampleRate) {}
+    SineGenerator::SineGenerator(unsigned int sampleRate) : AudioFunctor(sampleRate) {}
 
-    bool SineGenerator::operator == (const Generator & generator) {
+    bool SineGenerator::operator == (const AudioFunctor & generator) {
         if (typeid(generator) == typeid(*this))
             return phaseOffset == ((SineGenerator &)generator).phaseOffset;
         return false;

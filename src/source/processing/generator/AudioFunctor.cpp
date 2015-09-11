@@ -2,11 +2,11 @@
 // Created by Frank Krick on 9/10/15.
 //
 
-#include <processing/generator/Generator.h>
+#include <processing/generator/AudioFunctor.h>
 
 namespace itk {
 
-    bool Generator::operator != (const Generator &generator) {
+    bool AudioFunctor::operator != (const AudioFunctor &generator) {
         return ! this->operator==(generator);
     }
 

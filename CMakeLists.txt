@@ -37,10 +37,10 @@ set(SOURCE_FILES
         src/include/exception/DeviceParameterMissing.h
         src/source/exception/DeviceMissing.cpp
         src/include/exception/DeviceMissing.h
-        src/include/processing/generator/Generator.h
+        src/include/processing/generator/AudioFunctor.h
         src/include/processing/Parameter.h
         src/source/processing/generator/SineGenerator.cpp
-        src/source/processing/generator/SineGenerator.h src/source/Utility.cpp src/include/Utility.h src/source/processing/generator/Generator.cpp src/source/processing/instance/Instance.cpp src/include/processing/instance/Instance.h)
+        src/source/processing/generator/SineGenerator.h src/source/Utility.cpp src/include/Utility.h src/source/processing/generator/AudioFunctor.cpp src/source/processing/instance/Instance.cpp src/include/processing/instance/Instance.h)
 
 set(TEST_FILES
         test/device_graph/DeviceGraphTests.cpp

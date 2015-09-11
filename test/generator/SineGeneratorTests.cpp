@@ -30,7 +30,11 @@ BOOST_AUTO_TEST_SUITE(SineGeneratorTests)
         parameterBuffer.push_back(0.0);
         parameter.start = begin(parameterBuffer);
         parameterMap[0] = parameter;
-        one(end(buffer), end(buffer), begin(buffer), end(buffer), parameterMap);
+        std::array<AudioFunctor::Iterator, 2> tmpBegin { begin(buffer), begin(buffer) };
+        std::array<AudioFunctor::Iterator, 2> tmpEnd { end(buffer), end(buffer) };
+        std::array<AudioFunctor::ConstIterator, 2> cTmpBegin { begin(buffer), begin(buffer) };
+        std::array<AudioFunctor::ConstIterator, 2> cTmpEnd { end(buffer), end(buffer) };
+        one(cTmpEnd, cTmpEnd, tmpBegin, tmpEnd, parameterMap);
         auto copyOne = clone(one);
         auto copyTwo = clone(one);
         BOOST_CHECK(*copyOne == *copyTwo);
@@ -48,7 +52,11 @@ BOOST_AUTO_TEST_SUITE(SineGeneratorTests)
         parameterBuffer.push_back(0.0);
         parameter.start = begin(parameterBuffer);
         parameterMap[0] = parameter;
-        one(end(buffer), end(buffer), begin(buffer), end(buffer), parameterMap);
+        std::array<AudioFunctor::Iterator, 2> tmpBegin { begin(buffer), begin(buffer) };
+        std::array<AudioFunctor::Iterator, 2> tmpEnd { end(buffer), end(buffer) };
+        std::array<AudioFunctor::ConstIterator, 2> cTmpBegin { begin(buffer), begin(buffer) };
+        std::array<AudioFunctor::ConstIterator, 2> cTmpEnd { end(buffer), end(buffer) };
+        one(cTmpEnd, cTmpEnd, tmpBegin, tmpEnd, parameterMap);
         BOOST_CHECK(one != *two);
     }
 
@@ -64,7 +72,10 @@ BOOST_AUTO_TEST_SUITE(SineGeneratorTests)
         parameter.start = begin(controlData);
         parameterMap[0] = parameter;
         auto one = SineGenerator(44100);
-        one(end(audioData), end(audioData), begin(audioData), end(audioData), parameterMap);
+        std::array<AudioFunctor::Iterator, 2> tmpBegin { begin(audioData), begin(audioData) };
+        std::array<AudioFunctor::Iterator, 2> tmpEnd { end(audioData), end(audioData) };
+        std::array<AudioFunctor::ConstIterator, 2> cTmpEnd { end(audioData), end(audioData) };
+        one(cTmpEnd, cTmpEnd, tmpBegin, tmpEnd, parameterMap);
         auto checkData = DataBuffer(5000);
         int phaseOffset = 0;
         for (auto it = begin(checkData); it != end(checkData); ++it) {
