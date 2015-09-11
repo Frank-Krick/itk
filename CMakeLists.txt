@@ -40,11 +40,12 @@ set(SOURCE_FILES
         src/include/processing/generator/Generator.h
         src/include/processing/Parameter.h
         src/source/processing/generator/SineGenerator.cpp
-        src/source/processing/generator/SineGenerator.h)
+        src/source/processing/generator/SineGenerator.h src/source/Utility.cpp src/include/Utility.h src/source/processing/generator/Generator.cpp)
 
 set(TEST_FILES
         test/device_graph/DeviceGraphTests.cpp
         test/device/DeviceTests.cpp
+        test/generator/SineGeneratorTests.cpp
         test/test_main.cpp)
 
 add_executable(instrument_tool_kit src/source/main.cpp ${SOURCE_FILES})

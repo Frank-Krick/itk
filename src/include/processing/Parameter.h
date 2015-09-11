@@ -13,7 +13,7 @@ namespace itk {
 
     struct Parameter {
         IndexType id = 0;
-        DataBuffer buffer;
+        DataBuffer::iterator start;
     };
 
     typedef std::unordered_map<IndexType, Parameter> ParameterMap;

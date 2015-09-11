@@ -11,7 +11,7 @@
 
 using namespace itk;
 
-BOOST_AUTO_TEST_SUITE(DeviceGraph)
+BOOST_AUTO_TEST_SUITE(DeviceGraphTests)
 
     auto device = DeviceFactory::createDevice((DeviceType::AUDIO));
 

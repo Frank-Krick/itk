@@ -24,7 +24,11 @@ namespace itk {
         typedef std::list<ParameterDescription> ParameterList;
         typedef DataBuffer::iterator Iterator;
         /*
-         * Called to generate the data.
+         * Called to generate the data. The output is written into the
+         * range defined byy begin and end. ParameterMap contains iterators
+         * that enable access to all requested parameters.
+         * The iterator for each parameter is guaranteed to not reach end
+         * until the range defined by begin and end ends.
          */
         virtual void operator () (Iterator begin, Iterator end, ParameterMap & parameter) = 0;
         /*
@@ -33,6 +37,7 @@ namespace itk {
          * the same distance and the same parameters).
          */
         virtual bool operator == (const Generator &) = 0;
+        virtual bool operator != (const Generator &);
         /*
          * Returns the supported parameter.
          */
