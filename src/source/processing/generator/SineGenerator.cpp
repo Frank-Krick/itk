@@ -28,7 +28,7 @@ namespace itk {
         }
     }
 
-    AudioFunctor::ParameterList SineGenerator::parameterList() {
+    ParameterList SineGenerator::parameterList() {
         auto frequency = ParameterDescription();
         frequency.description = "Frequency of the Generator";
         frequency.id = 0;

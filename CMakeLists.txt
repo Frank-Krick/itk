@@ -40,12 +40,18 @@ set(SOURCE_FILES
         src/include/processing/generator/AudioFunctor.h
         src/include/processing/Parameter.h
         src/source/processing/generator/SineGenerator.cpp
-        src/source/processing/generator/SineGenerator.h src/source/Utility.cpp src/include/Utility.h src/source/processing/generator/AudioFunctor.cpp src/source/processing/instance/Instance.cpp src/include/processing/instance/Instance.h)
+        src/source/processing/generator/SineGenerator.h
+        src/source/Utility.cpp src/include/Utility.h
+        src/source/processing/generator/AudioFunctor.cpp
+        src/source/processing/instance/Instance.cpp
+        src/include/processing/instance/Instance.h
+        src/include/processing/functor_list/FunctorList.h)
 
 set(TEST_FILES
         test/device_graph/DeviceGraphTests.cpp
         test/device/DeviceTests.cpp
-        test/generator/SineGeneratorTests.cpp
+        test/processing/generator/SineGeneratorTests.cpp
+        test/processing/functor_list/FunctorListTests.cpp
         test/test_main.cpp)
 
 add_executable(instrument_tool_kit src/source/main.cpp ${SOURCE_FILES})

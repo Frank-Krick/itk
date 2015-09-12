@@ -21,11 +21,6 @@ namespace itk {
     class AudioFunctor {
     public:
         typedef std::shared_ptr<AudioFunctor> Ptr;
-        typedef std::list<ParameterDescription> ParameterList;
-        typedef DataBuffer::iterator Iterator;
-        typedef DataBuffer::const_iterator ConstIterator;
-        typedef std::array<Iterator, 2> OutputChannels;
-        typedef std::array<ConstIterator, 2> InputChannels;
         /*
          * Called to generate the data. The output is written into the
          * range defined by begin and end. ParameterMap contains iterators
