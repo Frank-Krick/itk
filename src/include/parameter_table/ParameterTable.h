@@ -14,12 +14,13 @@ namespace itk {
     class ParameterTable {
     public:
         typedef std::shared_ptr<ParameterTable> Ptr;
-        typedef IndexType IndexType;
 
         virtual void registerDeviceParameters(IndexType deviceId, Device &device) = 0;
         virtual void unregisterDeviceParameters(IndexType deviceId) = 0;
 
         virtual bool hasParameter(IndexType deviceId, IndexType parameterId) = 0;
+        virtual DataType getParameterValue(IndexType deviceId, IndexType parameterId) = 0;
+        virtual void setParameterValue(IndexType deviceId, IndexType parameterId, DataType value) = 0;
     };
 
 }

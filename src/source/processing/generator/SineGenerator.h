@@ -23,9 +23,8 @@ namespace itk {
 
         virtual void reset() override;
         virtual Ptr clone() override;
-        virtual Ptr create() override;
 
-        SineGenerator(unsigned int sampleRate);
+        SineGenerator(IndexType deviceId, unsigned int sampleRate);
 
     private:
         double phaseOffset = 0.0;

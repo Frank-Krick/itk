@@ -12,17 +12,17 @@ namespace itk {
         return tuple<Iter, Iter>(parameters.begin(), parameters.end());
     }
 
-    void DeviceImplementation::addParameter(ParameterDescription &parameter) {
-        parameters.insert(parameter);
-    }
-
     DeviceType DeviceImplementation::deviceType() {
         return type;
     }
 
-
     void DeviceImplementation::deviceType(DeviceType type) {
         this->type = type;
+    }
+
+    void DeviceImplementation::setFunctor(Functor::Ptr functor) {
+        this->functor = functor;
+        parameters = functor->parameterList();
     }
 
 }

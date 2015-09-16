@@ -7,23 +7,21 @@
 
 #include <device/Device.h>
 #include <unordered_set>
+#include <processing/generator/Functor.h>
 
 namespace itk {
 
     class DeviceImplementation : Device {
     public:
-
         virtual std::tuple<Iter, Iter> availableParameters();
-        virtual void addParameter(ParameterDescription &parameter);
-
         virtual DeviceType deviceType() override;
         void deviceType(DeviceType type);
+        void setFunctor(Functor::Ptr functor);
 
     private:
-
-        Parameters parameters;
         DeviceType type = DeviceType::AUDIO;
-
+        Functor::Ptr functor;
+        ParameterList parameters;
     };
 
 }

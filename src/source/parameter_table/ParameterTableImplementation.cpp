@@ -19,6 +19,7 @@ namespace itk {
 
     void ParameterTableImplementation::unregisterDeviceParameters(IndexType deviceId) {
         parameterTable.erase(deviceId);
+        valueMap.erase(deviceId);
     }
 
     bool ParameterTableImplementation::hasParameter(IndexType deviceId, IndexType parameterId) {
@@ -30,6 +31,14 @@ namespace itk {
             if (p->id == parameterId) return true;
         }
         return false;
+    }
+
+    DataType ParameterTableImplementation::getParameterValue(IndexType deviceId, IndexType parameterId) {
+        return valueMap.at(deviceId).at(parameterId);
+    }
+
+    void ParameterTableImplementation::setParameterValue(IndexType deviceId, IndexType parameterId, DataType value) {
+        valueMap[deviceId][parameterId] = value;
     }
 
 }

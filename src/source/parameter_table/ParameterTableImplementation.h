@@ -19,12 +19,16 @@ namespace itk {
         virtual void unregisterDeviceParameters(IndexType deviceId) override;
 
         virtual bool hasParameter(IndexType deviceId, IndexType parameterId) override;
+        virtual DataType getParameterValue(IndexType deviceId, IndexType parameterId);
+        virtual void setParameterValue(IndexType deviceId, IndexType parameterId, DataType value);
 
     private:
         typedef std::list<ParameterDescription> ParameterList;
         typedef std::unordered_map<IndexType, ParameterList> ParameterTable;
+        typedef std::unordered_map<IndexType, std::unordered_map<IndexType, DataType>> ValueMap;
 
         ParameterTable parameterTable;
+        ValueMap valueMap;
     };
 
 }

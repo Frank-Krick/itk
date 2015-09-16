@@ -20,13 +20,10 @@ namespace itk {
 
     struct Device {
     public:
-        typedef std::set<ParameterDescription> Parameters;
         typedef std::shared_ptr<Device> Ptr;
-        typedef Parameters::iterator Iter;
+        typedef ParameterList::iterator Iter;
 
         virtual std::tuple<Iter, Iter> availableParameters() = 0;
-        virtual void addParameter(ParameterDescription & parameter) = 0;
-
         virtual DeviceType deviceType() = 0;
 
         virtual ~Device() {};

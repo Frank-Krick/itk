@@ -43,16 +43,35 @@ set(SOURCE_FILES
         src/source/processing/generator/SineGenerator.h
         src/source/Utility.cpp src/include/Utility.h
         src/source/processing/generator/AudioFunctor.cpp
-        src/source/processing/instance/Instance.cpp
         src/include/processing/instance/Instance.h
-        src/include/processing/functor_list/FunctorList.h)
+        src/include/processing/functor_list/FunctorList.h
+        src/include/processing/generator/Functor.h
+        src/source/processing/instance/InstanceImplementation.cpp
+        src/source/processing/instance/InstanceImplementation.h
+        src/include/processing/generator/ControlFunctor.cpp
+        src/include/processing/generator/ControlFunctor.h)
 
 set(TEST_FILES
         test/device_graph/DeviceGraphTests.cpp
         test/device/DeviceTests.cpp
         test/processing/generator/SineGeneratorTests.cpp
         test/processing/functor_list/FunctorListTests.cpp
-        test/test_main.cpp)
+        test/parameter_table/ParameterTableTests.cpp
+        test/test_main.cpp
+        test/test_data/device/TestDevices.cpp
+        test/test_data/device/TestDevices.h
+        test/test_data/device/ParameterCopyAudioFunctor.cpp
+        test/test_data/device/ParameterCopyAudioFunctor.h
+        test/test_data/device/TestParameter.cpp
+        test/test_data/device/TestParameter.h
+        test/instance/InstanceTests.cpp
+        test/test_data/instance/TestInstances.cpp
+        test/test_data/instance/TestInstances.h
+        test/test_data/device/TestFunctors.cpp
+        test/test_data/device/TestFunctors.h
+        test/test_data/device/TestFunctorLists.cpp
+        test/test_data/device/TestFunctorLists.h
+        test/instance/InstanceImplementationTests.cpp)
 
 add_executable(instrument_tool_kit src/source/main.cpp ${SOURCE_FILES})
 add_executable(itk_tests ${TEST_FILES} ${SOURCE_FILES})

@@ -16,7 +16,7 @@ namespace itk {
         auto right = beginOut[1];
         auto end = endOut[0];
 
-        auto frequencyIterator = parameter[0].start;
+        auto frequencyIterator = parameter[0].begin;
         while (left != end) {
             auto f = *frequencyIterator;
             *left = sin(tau * f * phaseOffset);
@@ -45,22 +45,22 @@ namespace itk {
     }
 
     AudioFunctor::Ptr SineGenerator::clone() {
-        auto generator = new SineGenerator(sampleRate);
+        auto generator = new SineGenerator(0, sampleRate);
         generator->phaseOffset = phaseOffset;
         return AudioFunctor::Ptr((AudioFunctor *)generator);
     }
 
-    AudioFunctor::Ptr SineGenerator::create() {
-        auto generator = new SineGenerator(sampleRate);
-        return AudioFunctor::Ptr((AudioFunctor *)generator);
-    }
-
-    SineGenerator::SineGenerator(unsigned int sampleRate) : AudioFunctor(sampleRate) {}
+    SineGenerator::SineGenerator(IndexType deviceId, unsigned int sampleRate)
+            : AudioFunctor(deviceId, sampleRate) {}
 
     bool SineGenerator::operator == (const AudioFunctor & generator) {
-        if (typeid(generator) == typeid(*this))
-            return phaseOffset == ((SineGenerator &)generator).phaseOffset;
-        return false;
+        if (typeid(generator) == typeid(*this)) {
+            auto f = (SineGenerator &) generator;
+            return phaseOffset == f.phaseOffset &&
+                   sampleRate == f.sampleRate;
+        } else {
+            return false;
+        }
     }
 
 }

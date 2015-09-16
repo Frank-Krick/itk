@@ -9,6 +9,8 @@
 #include <processing/Parameter.h>
 #include <parameter_description/ParameterDescription.h>
 
+#include "Functor.h"
+
 #include <array>
 #include <unordered_map>
 #include <list>
@@ -18,8 +20,9 @@ namespace itk {
      * The functor AudioFunctor provides the base class for generating functions
      * like sine or square generators.
      */
-    class AudioFunctor {
+    class AudioFunctor : public Functor {
     public:
+        typedef std::unordered_map<IndexType, ParameterMap> ParameterDeviceMap;
         typedef std::shared_ptr<AudioFunctor> Ptr;
         /*
          * Called to generate the data. The output is written into the
@@ -40,27 +43,25 @@ namespace itk {
         virtual bool operator == (const AudioFunctor &) = 0;
         virtual bool operator != (const AudioFunctor &);
         /*
-         * Returns the supported parameter.
-         */
-        virtual ParameterList parameterList() = 0;
-        /*
          * Returns a copy of self.
          */
         virtual Ptr clone() = 0;
-        /*
-         * Creates a new AudioFunctor with initial values.
-         */
-        virtual Ptr create() = 0;
         /*
          * Sets the initial values for all member variables.
          */
         virtual void reset() = 0;
 
-        AudioFunctor(unsigned int sampleRate) { this->sampleRate = sampleRate; };
+        virtual ParameterList parameterList() override = 0;
+
+        AudioFunctor(IndexType deviceId, unsigned int sampleRate) :
+                Functor(deviceId),
+                sampleRate(sampleRate) {};
+
         virtual ~AudioFunctor() {};
 
     protected:
-        unsigned int sampleRate = 0;
+        unsigned int sampleRate;
+
     };
 
 }

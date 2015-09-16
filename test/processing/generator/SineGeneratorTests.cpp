@@ -14,21 +14,20 @@ using std::equal;
 BOOST_AUTO_TEST_SUITE(SineGeneratorTests)
 
     BOOST_AUTO_TEST_CASE( two_new_sine_generator_should_be_equal ) {
-        auto one = SineGenerator(44100);
-        auto two = one.create();
-        BOOST_CHECK(one == *two);
+        auto one = SineGenerator(0, 44100);
+        auto two = SineGenerator(0, 44100);
+        BOOST_CHECK(one == two);
     }
 
     BOOST_AUTO_TEST_CASE( two_copies_of_a_sine_generator_should_be_equal ) {
-        auto one = SineGenerator(44100);
+        auto one = SineGenerator(0, 44100);
         DataBuffer buffer = DataBuffer();
         buffer.push_back(0.0);
         ParameterMap parameterMap;
         Parameter parameter;
-        parameter.id = 0;
         DataBuffer parameterBuffer;
         parameterBuffer.push_back(0.0);
-        parameter.start = begin(parameterBuffer);
+        parameter.begin = begin(parameterBuffer);
         parameterMap[0] = parameter;
         std::array<Iterator, 2> tmpBegin { begin(buffer), begin(buffer) };
         std::array<Iterator, 2> tmpEnd { end(buffer), end(buffer) };
@@ -41,16 +40,15 @@ BOOST_AUTO_TEST_SUITE(SineGeneratorTests)
     }
 
     BOOST_AUTO_TEST_CASE( two_sine_generators_should_not_be_equal_if_state_differs ) {
-        auto one = SineGenerator(44100);
+        auto one = SineGenerator(0, 44100);
         auto two = clone(one);
         DataBuffer buffer = DataBuffer();
         buffer.push_back(0.0);
         ParameterMap parameterMap;
         Parameter parameter;
-        parameter.id = 0;
         DataBuffer parameterBuffer;
         parameterBuffer.push_back(0.0);
-        parameter.start = begin(parameterBuffer);
+        parameter.begin = begin(parameterBuffer);
         parameterMap[0] = parameter;
         std::array<Iterator, 2> tmpBegin { begin(buffer), begin(buffer) };
         std::array<Iterator, 2> tmpEnd { end(buffer), end(buffer) };
@@ -68,10 +66,9 @@ BOOST_AUTO_TEST_SUITE(SineGeneratorTests)
         }
         ParameterMap parameterMap;
         Parameter parameter;
-        parameter.id = 0;
-        parameter.start = begin(controlData);
+        parameter.begin = begin(controlData);
         parameterMap[0] = parameter;
-        auto one = SineGenerator(44100);
+        auto one = SineGenerator(0, 44100);
         std::array<Iterator, 2> tmpBegin { begin(audioData), begin(audioData) };
         std::array<Iterator, 2> tmpEnd { end(audioData), end(audioData) };
         std::array<ConstIterator, 2> cTmpEnd { end(audioData), end(audioData) };
