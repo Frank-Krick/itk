@@ -63,4 +63,10 @@ namespace itk {
         }
     }
 
+    Functor::Ptr SineGenerator::clone(IndexType deviceId) {
+        auto generator = new SineGenerator(deviceId, sampleRate);
+        generator->phaseOffset = phaseOffset;
+        return AudioFunctor::Ptr((AudioFunctor *)generator);
+    }
+
 }

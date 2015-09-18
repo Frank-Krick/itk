@@ -15,10 +15,10 @@ namespace itk {
         initializeParameterMap();
         calculateControlParameter();
         calculateAudioOutput();
-        auto left = cbegin(audioFunctorTable[_audioOutput].left);
-        auto right = cbegin(audioFunctorTable[_audioOutput].right);
-        auto left_end = cend(audioFunctorTable[_audioOutput].left);
-        auto right_end = cend(audioFunctorTable[_audioOutput].right);
+        auto left = cbegin(audioFunctorTable[_audioOutput]->left);
+        auto right = cbegin(audioFunctorTable[_audioOutput]->right);
+        auto left_end = cend(audioFunctorTable[_audioOutput]->left);
+        auto right_end = cend(audioFunctorTable[_audioOutput]->right);
         copy(left, left_end, beginOut[0]);
         copy(right, right_end, beginOut[1]);
     }
@@ -33,29 +33,29 @@ namespace itk {
             for (auto node : nodes) {
                 auto wrapper = audioFunctorTable[node];
                 auto beginOut = OutputChannels();
-                beginOut[0] = begin(wrapper.left);
-                beginOut[1] = begin(wrapper.right);
+                beginOut[0] = begin(wrapper->left);
+                beginOut[1] = begin(wrapper->right);
                 auto endOut = OutputChannels();
-                endOut[0] = end(wrapper.left);
-                endOut[1] = end(wrapper.right);
+                endOut[0] = end(wrapper->left);
+                endOut[1] = end(wrapper->right);
 
                 auto input = findAudioDevicePredecessors(node);
                 auto endIn = InputChannels();
                 auto beginIn = InputChannels();
                 if (input.size() == 0) {
-                    beginIn[0] = begin(wrapper.left);
-                    beginIn[1] = begin(wrapper.left);
-                    endIn[0] = end(wrapper.left);
-                    endIn[1] = end(wrapper.left);
+                    beginIn[0] = begin(wrapper->left);
+                    beginIn[1] = begin(wrapper->left);
+                    endIn[0] = end(wrapper->left);
+                    endIn[1] = end(wrapper->left);
                 } else {
                     auto inNode = audioFunctorTable[input[0]];
-                    beginIn[0] = begin(inNode.left);
-                    beginIn[1] = begin(inNode.right);
-                    endIn[0] = end(inNode.left);
-                    endIn[1] = end(inNode.right);
+                    beginIn[0] = begin(inNode->left);
+                    beginIn[1] = begin(inNode->right);
+                    endIn[0] = end(inNode->left);
+                    endIn[1] = end(inNode->right);
                 }
-                auto functor = wrapper.functor;
-                auto inputParameterMap = createInputParameterMapForFunctorList<AudioFunctor>(wrapper);
+                auto functor = wrapper->functor;
+                auto inputParameterMap = createInputParameterMapForFunctorList<AudioFunctor>(*wrapper);
                 (*functor)(beginIn, endIn, beginOut, endOut, *inputParameterMap);
             }
             nodes = findAudioDeviceChildren(begin(nodes), end(nodes));
@@ -84,9 +84,8 @@ namespace itk {
             auto parameters = parameterList.second;
             for (auto parameter : parameters) {
                 auto parameterId = parameter.first;
-                auto buffer = parameter.second.buffer;
                 auto value = parameterTable.getParameterValue(deviceId, parameterId);
-                fill(begin(buffer), end(buffer), value);
+                fill(begin(parameter.second->buffer), end(parameter.second->buffer), value);
             }
         }
     }
@@ -101,10 +100,10 @@ namespace itk {
         while (nodes.size() > 0) {
             for (auto node : nodes) {
                 auto wrapper = controlFunctorTable[node];
-                auto functor = wrapper.functor;
-                auto inputParameterMap = createInputParameterMapForFunctorList<ControlFunctor>(wrapper);
-                (*functor)(begin(wrapper.control), end(wrapper.control), *inputParameterMap);
-                distributeParametersAlongEdges(wrapper.index);
+                auto functor = wrapper->functor;
+                auto inputParameterMap = createInputParameterMapForFunctorList<ControlFunctor>(*wrapper);
+                (*functor)(begin(wrapper->control), end(wrapper->control), *inputParameterMap);
+                distributeParametersAlongEdges(wrapper->index);
             }
             nodes = findControlDeviceChildren(begin(nodes), end(nodes));
         }
@@ -163,9 +162,9 @@ namespace itk {
             auto sourceDeviceId = edge.first;
             auto targetDeviceId = edge.second.deviceId;
             auto targetParameterId = edge.second.parameterId;
-            auto sourceBegin = cbegin(controlFunctorTable[sourceDeviceId].control);
-            auto sourceEnd = cend(controlFunctorTable[sourceDeviceId].control);
-            auto targetBegin = begin(parameterMap[targetDeviceId][targetParameterId].buffer);
+            auto sourceBegin = cbegin(controlFunctorTable[sourceDeviceId]->control);
+            auto sourceEnd = cend(controlFunctorTable[sourceDeviceId]->control);
+            auto targetBegin = begin(parameterMap[targetDeviceId][targetParameterId]->buffer);
             copy(sourceBegin, sourceEnd, targetBegin);
         }
     }
@@ -177,7 +176,7 @@ namespace itk {
         using boost::counting_iterator;
         auto leafs = unordered_set<IndexType>(
                 counting_iterator<IndexType>(0),
-                counting_iterator<IndexType>(controlFunctorTable.size()));
+                counting_iterator<IndexType>(audioFunctorTable.size()));
 
         for (auto adjacencyList : audioDeviceEdges) {
             for (auto edge : adjacencyList) {
@@ -212,19 +211,19 @@ namespace itk {
     void InstanceImplementation::allocateParameterMemory() {
         for (auto parameterList : parameterMap) {
             for (auto parameter : parameterList.second) {
-                parameter.second.buffer = DataBuffer(_bufferSize);
+                parameter.second->buffer = DataBuffer(_bufferSize);
             }
         }
     }
 
     void InstanceImplementation::allocateDeviceMemory() {
         for (auto audioFunctor : audioFunctorTable) {
-            audioFunctor.left = DataBuffer(_bufferSize);
-            audioFunctor.right = DataBuffer(_bufferSize);
+            audioFunctor->left = DataBuffer(_bufferSize);
+            audioFunctor->right = DataBuffer(_bufferSize);
         }
 
         for (auto controlFunctor : controlFunctorTable) {
-            controlFunctor.control = DataBuffer(_bufferSize);
+            controlFunctor->control = DataBuffer(_bufferSize);
         }
     }
 
@@ -235,9 +234,9 @@ namespace itk {
     IndexType InstanceImplementation::addAudioFunctorList(AudioFunctorList::Ptr functorList) {
         using namespace std;
 
-        AudioFunctorWrapper functorWrapper;
-        functorWrapper.functor = functorList;
-        functorWrapper.index = audioFunctorTable.size();
+        auto functorWrapper = AudioFunctorWrapper(new FunctorWrapper<AudioFunctorList>());
+        functorWrapper->functor = functorList;
+        functorWrapper->index = audioFunctorTable.size();
         audioFunctorTable.push_back(functorWrapper);
 
         auto functorListParameters = functorList->allParameters();
@@ -246,21 +245,21 @@ namespace itk {
             auto parameterList = functorParameters.second;
             for (auto parameter : parameterList) {
                 auto parameterId = parameter.id;
-                ParameterWrapper wrapper;
-                parameterMap[deviceId][parameterId] = wrapper;
+                auto wrapper = new ParameterWrapper();
+                parameterMap[deviceId][parameterId] = ParameterWrapper::Ptr(wrapper);
             }
         }
 
         audioDeviceEdges.push_back(AudioEdgeList());
-        return functorWrapper.index;
+        return functorWrapper->index;
     }
 
     IndexType InstanceImplementation::addControlFunctorList(ControlFunctorList::Ptr functorList) {
         using namespace std;
 
         ControlFunctorWrapper functorWrapper;
-        functorWrapper.functor = functorList;
-        functorWrapper.index = controlFunctorTable.size();
+        functorWrapper->functor = functorList;
+        functorWrapper->index = controlFunctorTable.size();
         controlFunctorTable.push_back(functorWrapper);
 
         auto functorListParameters = functorList->allParameters();
@@ -269,13 +268,13 @@ namespace itk {
             auto parameterList = functorParameters.second;
             for (auto parameter : parameterList) {
                 auto parameterId = parameter.id;
-                ParameterWrapper wrapper;
-                parameterMap[deviceId][parameterId] = wrapper;
+                auto wrapper = new ParameterWrapper();
+                parameterMap[deviceId][parameterId] = ParameterWrapper::Ptr(wrapper);
             }
         }
 
         controlDeviceEdges.push_back(ControlEdgeList());
-        return functorWrapper.index;
+        return functorWrapper->index;
     }
 
     void InstanceImplementation::connect(IndexType sourceId, IndexType targetId) {

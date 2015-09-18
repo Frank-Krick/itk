@@ -10,11 +10,12 @@ using std::begin;
 using std::end;
 using std::cout;
 using std::equal;
+using std::endl;
 
 BOOST_AUTO_TEST_SUITE( InstanceTests )
 
-    BOOST_AUTO_TEST_CASE( no_tests_implemented ) {
-        int bufferSize = 35;
+    BOOST_AUTO_TEST_CASE( the_instance_can_evaluate_a_functor_list ) {
+        int bufferSize = 5;
         auto temp = TestInstances::createSimpleTestInstance(bufferSize);
         auto parameters = temp.first;
         auto instance = temp.second;
@@ -33,13 +34,15 @@ BOOST_AUTO_TEST_SUITE( InstanceTests )
         OutputChannels endOut { end(left), end(right) };
         (*instance)(beginOut, endOut);
         auto expected = DataBuffer(bufferSize);
-        for (auto ex : expected) {
-            ex = 3.0;
+        for (auto it = begin(expected); it != end(expected); ++it) {
+            *it = 3.0;
         }
         BOOST_CHECK(equal(begin(left), end(left), begin(expected)));
-        for (auto f : left) {
-            cout << f << " ";
-        }
+    }
+
+    BOOST_AUTO_TEST_CASE( the_instance_can_evaluate_multiple_functor_lists ) {
+
+        BOOST_CHECK(1 == 2);
     }
 
 BOOST_AUTO_TEST_SUITE_END()

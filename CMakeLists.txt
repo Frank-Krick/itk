@@ -71,7 +71,7 @@ set(TEST_FILES
         test/test_data/device/TestFunctors.h
         test/test_data/device/TestFunctorLists.cpp
         test/test_data/device/TestFunctorLists.h
-        test/instance/InstanceImplementationTests.cpp)
+        test/instance/InstanceImplementationTests.cpp test/test_data/device/InputCopyAudioFunctor.cpp test/test_data/device/InputCopyAudioFunctor.h)
 
 add_executable(instrument_tool_kit src/source/main.cpp ${SOURCE_FILES})
 add_executable(itk_tests ${TEST_FILES} ${SOURCE_FILES})

@@ -7,6 +7,7 @@
 
 #include <Typedef.h>
 #include <parameter_description/ParameterDescription.h>
+#include <processing/generator/Functor.h>
 
 #include <ostream>
 #include <memory>
@@ -25,6 +26,7 @@ namespace itk {
 
         virtual std::tuple<Iter, Iter> availableParameters() = 0;
         virtual DeviceType deviceType() = 0;
+        virtual Functor::Ptr functor(IndexType deviceId) = 0;
 
         virtual ~Device() {};
     };

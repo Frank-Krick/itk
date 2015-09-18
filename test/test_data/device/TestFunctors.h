@@ -13,6 +13,8 @@ class TestFunctors {
 public:
     static AudioFunctor::Ptr createParameterCopyFunctor(IndexType deviceId, IndexType numParameters,
                                                         IndexType parameterId, unsigned int sampleRate);
+
+    static AudioFunctor::Ptr inputCopyFunctor(IndexType deviceId, unsigned int sampleRate);
 };
 
 

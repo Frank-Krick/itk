@@ -24,6 +24,8 @@ namespace itk {
         virtual void reset() override;
         virtual Ptr clone() override;
 
+        virtual Functor::Ptr clone(IndexType deviceId) override;
+
         SineGenerator(IndexType deviceId, unsigned int sampleRate);
 
     private:

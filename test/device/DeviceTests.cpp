@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_SUITE( DeviceTests )
         auto device = DeviceImplementation();
         auto functor = new ParameterCopyAudioFunctor(0, 5, 2, 44100);
         auto deviceFunctor = Functor::Ptr((Functor *)functor);
-        device.setFunctor(deviceFunctor);
+        device.functor(deviceFunctor);
         auto parameters = functor->parameterList();
 
         typename Device::Iter pi, pi_end;

@@ -15,9 +15,16 @@ std::pair<ParameterTable::Ptr, Instance::Ptr> TestInstances::createSimpleTestIns
     parameterTable->registerDeviceParameters(0, *parameterCopyDevice);
     parameterTable->registerDeviceParameters(1, *parameterCopyDevice);
     parameterTable->registerDeviceParameters(2, *parameterCopyDevice);
-    auto parameterCopyFunctorOne = TestFunctors::createParameterCopyFunctor(0, 3, 1, 44100);
-    auto parameterCopyFunctorTwo = TestFunctors::createParameterCopyFunctor(1, 3, 1, 44100);
-    auto parameterCopyFunctorThree = TestFunctors::createParameterCopyFunctor(2, 3, 2, 44100);
+
+    auto functorOne = parameterCopyDevice->functor(0);
+    auto parameterCopyFunctorOne = std::dynamic_pointer_cast<AudioFunctor>(functorOne);
+
+    auto functorTwo = parameterCopyDevice->functor(1);
+    auto parameterCopyFunctorTwo = std::dynamic_pointer_cast<AudioFunctor>(functorTwo);
+
+    auto functorThree = parameterCopyDevice->functor(2);
+    auto parameterCopyFunctorThree = std::dynamic_pointer_cast<AudioFunctor>(functorThree);
+
     auto testFunctor = TestFunctorLists::audioFunctorList(
             {parameterCopyFunctorOne, parameterCopyFunctorTwo, parameterCopyFunctorThree});
 

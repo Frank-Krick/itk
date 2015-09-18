@@ -20,9 +20,13 @@ namespace itk {
         this->type = type;
     }
 
-    void DeviceImplementation::setFunctor(Functor::Ptr functor) {
-        this->functor = functor;
+    void DeviceImplementation::functor(Functor::Ptr functor) {
+        this->_functor = functor;
         parameters = functor->parameterList();
+    }
+
+    Functor::Ptr DeviceImplementation::functor(IndexType deviceId) {
+        return _functor->clone(deviceId);
     }
 
 }

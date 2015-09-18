@@ -1,15 +1,15 @@
 //
-// Created by Frank Krick on 9/12/15.
+// Created by Frank Krick on 9/16/15.
 //
 
-#ifndef INSTRUMENT_TOOL_KIT_PARAMETERCOPYAUDIOFUNCTOR_H
-#define INSTRUMENT_TOOL_KIT_PARAMETERCOPYAUDIOFUNCTOR_H
+#ifndef INSTRUMENT_TOOL_KIT_INPUTCOPYAUDIOFUNCTOR_H
+#define INSTRUMENT_TOOL_KIT_INPUTCOPYAUDIOFUNCTOR_H
 
 #include <processing/generator/AudioFunctor.h>
 
 using namespace itk;
 
-class ParameterCopyAudioFunctor : public AudioFunctor {
+class InputCopyAudioFunctor : public AudioFunctor {
 public:
     virtual void operator () (
             InputChannels beginIn, InputChannels endIn,
@@ -19,18 +19,15 @@ public:
     virtual bool operator==(const AudioFunctor &functor) override;
 
     virtual ParameterList parameterList() override;
+
     virtual Ptr clone() override;
+
     virtual Functor::Ptr clone(IndexType deviceId) override;
 
     virtual void reset() override;
 
-    ParameterCopyAudioFunctor(IndexType deviceId, IndexType numParameters,
-                              IndexType sourceParameterId, unsigned int sampleRate);
-
-private:
-    IndexType sourceParameterId = 0;
-    IndexType numParameters = 0;
+    InputCopyAudioFunctor(IndexType deviceId, unsigned int sampleRate);
 };
 
 
-#endif //INSTRUMENT_TOOL_KIT_PARAMETERCOPYAUDIOFUNCTOR_H
+#endif //INSTRUMENT_TOOL_KIT_INPUTCOPYAUDIOFUNCTOR_H

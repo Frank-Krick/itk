@@ -35,12 +35,14 @@ namespace itk {
 
     private:
         struct ParameterWrapper {
+            typedef std::shared_ptr<ParameterWrapper> Ptr;
             DataBuffer buffer;
             bool isModulated = false;
         };
 
         template <class T>
         struct FunctorWrapper {
+            typedef std::shared_ptr<FunctorWrapper<T>> Ptr;
             typename T::Ptr functor;
             DataBuffer left;
             DataBuffer right;
@@ -59,11 +61,11 @@ namespace itk {
         typedef std::pair<IndexType, IndexType> AudioEdge;
         typedef std::list<AudioEdge> AudioEdgeList;
         typedef std::vector<AudioEdgeList> AudioAdjacencyList;
-        typedef FunctorWrapper<AudioFunctorList> AudioFunctorWrapper;
-        typedef FunctorWrapper<ControlFunctorList> ControlFunctorWrapper;
+        typedef FunctorWrapper<AudioFunctorList>::Ptr AudioFunctorWrapper;
+        typedef FunctorWrapper<ControlFunctorList>::Ptr ControlFunctorWrapper;
         typedef std::vector<AudioFunctorWrapper> AudioFunctorTable;
         typedef std::vector<ControlFunctorWrapper> ControlFunctorTable;
-        typedef std::unordered_map<IndexType, std::unordered_map<IndexType, ParameterWrapper>> DeviceParameterMap;
+        typedef std::unordered_map<IndexType, std::unordered_map<IndexType, ParameterWrapper::Ptr>> DeviceParameterMap;
         typedef std::pair<IndexType, IndexType> IndexPair;
         typedef std::vector<IndexPair> IndexPairs;
 
@@ -99,8 +101,8 @@ namespace itk {
                     auto parameterId = parameter.id;
                     auto sourceParameter = parameterMap[deviceId][parameterId];
                     Parameter p;
-                    p.begin = begin(sourceParameter.buffer);
-                    p.end = end(sourceParameter.buffer);
+                    p.begin = begin(sourceParameter->buffer);
+                    p.end = end(sourceParameter->buffer);
                     (*inputParameterMap)[deviceId][parameterId] = p;
                 }
             }

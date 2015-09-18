@@ -17,9 +17,9 @@ Device::Ptr TestDevices::createParameterCopyDevice(IndexType numParameters,
                                                    IndexType sourceParameterId) {
 
     auto device = new DeviceImplementation();
-    auto functor = new ParameterCopyAudioFunctor(0, 5, 2, 44100);
+    auto functor = new ParameterCopyAudioFunctor(0, numParameters, sourceParameterId, 44100);
     auto deviceFunctor = Functor::Ptr((Functor *)functor);
-    device->setFunctor(deviceFunctor);
+    device->functor(deviceFunctor);
     device->deviceType(DeviceType::AUDIO);
     return Device::Ptr((Device *)device);
 }

@@ -47,6 +47,10 @@ namespace itk {
          */
         virtual Ptr clone() = 0;
         /*
+         * Returns a copy of self with the given device id.
+         */
+        virtual Functor::Ptr clone(IndexType deviceId) override = 0;
+        /*
          * Sets the initial values for all member variables.
          */
         virtual void reset() = 0;

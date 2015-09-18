@@ -10,7 +10,7 @@ namespace itk {
     public:
         typedef std::shared_ptr<Functor> Ptr;
         virtual ParameterList parameterList() = 0;
-
+        virtual Ptr clone(IndexType deviceId) = 0;
         virtual IndexType deviceId() { return this->_deviceId; }
 
         Functor(IndexType deviceId) : _deviceId(deviceId) {}

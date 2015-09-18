@@ -61,3 +61,8 @@ ParameterCopyAudioFunctor::ParameterCopyAudioFunctor(
 
     BOOST_ASSERT(sourceParameterId < numParameters);
 }
+
+Functor::Ptr ParameterCopyAudioFunctor::clone(IndexType deviceId) {
+    auto clone = new ParameterCopyAudioFunctor(deviceId, numParameters, sourceParameterId, sampleRate);
+    return AudioFunctor::Ptr((AudioFunctor *)clone);
+}
