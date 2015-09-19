@@ -55,7 +55,6 @@ BOOST_AUTO_TEST_SUITE( InstanceTests )
         for (auto it = begin(expected); it != end(expected); ++it) {
             *it = 1.0;
         }
-        cout << endl;
         BOOST_CHECK(equal(begin(left), end(left), begin(expected)));
     }
 
