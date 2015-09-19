@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_SUITE(DeviceGraphTests)
 
     BOOST_AUTO_TEST_CASE( connect_control_device ) {
         auto sourceDevice = DeviceFactory::createDevice(DeviceType::CONTROL);
-        auto targetDevice = TestDevices::createParameterCopyDevice(5, 2);
+        auto targetDevice = TestDevices::parameterCopyDevice(5, 2);
 
         auto deviceGraph = DeviceGraphFactory::createDeviceGraph();
         auto sourceId = deviceGraph->addDevice(sourceDevice);

@@ -41,8 +41,22 @@ BOOST_AUTO_TEST_SUITE( InstanceTests )
     }
 
     BOOST_AUTO_TEST_CASE( the_instance_can_evaluate_multiple_functor_lists ) {
-
-        BOOST_CHECK(1 == 2);
+        int bufferSize = 35;
+        auto temp = TestInstances::twoFunctorListInSeriesInstance(bufferSize);
+        auto parameters = temp.first;
+        auto instance = temp.second;
+        parameters->setParameterValue(0, 0, 1.0);
+        auto left = DataBuffer(bufferSize);
+        auto right = DataBuffer(bufferSize);
+        OutputChannels beginOut { begin(left), begin(right) };
+        OutputChannels endOut { end(left), end(right) };
+        (*instance)(beginOut, endOut);
+        auto expected = DataBuffer(bufferSize);
+        for (auto it = begin(expected); it != end(expected); ++it) {
+            *it = 1.0;
+        }
+        cout << endl;
+        BOOST_CHECK(equal(begin(left), end(left), begin(expected)));
     }
 
 BOOST_AUTO_TEST_SUITE_END()

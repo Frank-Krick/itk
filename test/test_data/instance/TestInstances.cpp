@@ -11,7 +11,7 @@
 
 std::pair<ParameterTable::Ptr, Instance::Ptr> TestInstances::createSimpleTestInstance(unsigned int bufferSize) {
     auto parameterTable = new ParameterTableImplementation();
-    auto parameterCopyDevice = TestDevices::createParameterCopyDevice(3, 1);
+    auto parameterCopyDevice = TestDevices::parameterCopyDevice(3, 1);
     parameterTable->registerDeviceParameters(0, *parameterCopyDevice);
     parameterTable->registerDeviceParameters(1, *parameterCopyDevice);
     parameterTable->registerDeviceParameters(2, *parameterCopyDevice);
@@ -37,4 +37,38 @@ std::pair<ParameterTable::Ptr, Instance::Ptr> TestInstances::createSimpleTestIns
             ParameterTable::Ptr((ParameterTable *)parameterTable),
             Instance::Ptr((Instance *)instance)
     );
+}
+
+std::pair<ParameterTable::Ptr, Instance::Ptr> TestInstances::twoFunctorListInSeriesInstance(unsigned int bufferSize) {
+    auto parameterTable = new ParameterTableImplementation();
+
+    IndexType parameterCopyDeviceId = 0;
+    auto parameterCopyDevice = TestDevices::parameterCopyDevice(1, 0);
+    auto parameterCopyFunctor = parameterCopyDevice->functor(0);
+    auto parameterCopyFunctorList = TestFunctorLists::audioFunctorList(
+            {std::static_pointer_cast<AudioFunctor>(parameterCopyFunctor)});
+
+    IndexType inputCopyDeviceId = 1;
+    auto inputCopyDevice = TestDevices::inputCopyDevice();
+    auto inputCopyFunctor = inputCopyDevice->functor(inputCopyDeviceId);
+    auto inputCopyFunctorList = TestFunctorLists::audioFunctorList(
+            {std::static_pointer_cast<AudioFunctor>(inputCopyFunctor)});
+
+    parameterTable->registerDeviceParameters(
+            parameterCopyDeviceId, *parameterCopyDevice);
+
+    parameterTable->registerDeviceParameters(
+            inputCopyDeviceId, *inputCopyDevice);
+
+    auto instance = new InstanceImplementation(*parameterTable);
+    auto parameterCopyFunctorListId = instance->addAudioFunctorList(parameterCopyFunctorList);
+    auto inputCopyFunctorListId = instance->addAudioFunctorList(inputCopyFunctorList);
+    instance->connectOutput(inputCopyFunctorListId);
+    instance->connect(parameterCopyFunctorListId, inputCopyFunctorListId);
+    instance->bufferSize(bufferSize);
+    instance->allocateMemory();
+
+    return std::pair<ParameterTable::Ptr, Instance::Ptr>(
+            ParameterTable::Ptr((ParameterTable *)parameterTable),
+            Instance::Ptr((Instance *)instance));
 }

@@ -12,8 +12,8 @@ using namespace itk;
 
 class TestDevices {
 public:
-    static Device::Ptr createParameterCopyDevice(IndexType numParameters, IndexType sourceParameterId);
-
+    static Device::Ptr parameterCopyDevice(IndexType numParameters, IndexType sourceParameterId);
+    static Device::Ptr inputCopyDevice();
 };
 
 

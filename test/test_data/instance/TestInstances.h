@@ -12,6 +12,7 @@ using namespace itk;
 class TestInstances {
 public:
     static std::pair<ParameterTable::Ptr, Instance::Ptr> createSimpleTestInstance(unsigned int bufferSize);
+    static std::pair<ParameterTable::Ptr, Instance::Ptr> twoFunctorListInSeriesInstance(unsigned int bufferSize);
 };
 
 

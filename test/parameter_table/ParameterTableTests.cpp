@@ -11,7 +11,7 @@ BOOST_AUTO_TEST_SUITE( ParameterTableTests )
 
     BOOST_AUTO_TEST_CASE( should_store_registered_parameters ) {
         auto parameterTable = ParameterTableImplementation();
-        auto device = TestDevices::createParameterCopyDevice(4, 1);
+        auto device = TestDevices::parameterCopyDevice(4, 1);
         IndexType deviceId = 3;
         parameterTable.registerDeviceParameters(deviceId, *device);
         IndexType parameterId = 2;

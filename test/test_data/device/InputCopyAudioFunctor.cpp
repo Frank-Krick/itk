@@ -34,6 +34,5 @@ InputCopyAudioFunctor::InputCopyAudioFunctor(IndexType deviceId, unsigned int sa
 
 Functor::Ptr InputCopyAudioFunctor::clone(IndexType deviceId) {
     auto functor = new InputCopyAudioFunctor(deviceId, sampleRate);
-    return std::shared_ptr<AudioFunctor>((AudioFunctor *)functor);
-
+    return std::shared_ptr<Functor>((Functor *)functor);
 }
