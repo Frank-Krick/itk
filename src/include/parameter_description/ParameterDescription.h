@@ -12,7 +12,7 @@
 
 namespace itk {
 
-    struct ParameterDescription {
+    class ParameterDescription {
     public:
         IndexType id = 0;
         std::string name;

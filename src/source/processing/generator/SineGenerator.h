@@ -15,7 +15,7 @@ namespace itk {
         virtual void operator () (
                 InputChannels beginIn, InputChannels endIn,
                 OutputChannels beginOut, OutputChannels endOut,
-                ParameterMap & parameter);
+                ParameterMap & parameter) override;
 
         virtual ParameterList parameterList() override;
 

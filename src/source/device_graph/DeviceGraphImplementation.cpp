@@ -113,7 +113,6 @@ namespace itk {
     }
 
     DeviceGraph::DeviceDescription DeviceGraphImplementation::describeDevice(IndexType deviceId) {
-        auto vertex = deviceIdVertexMap.at(deviceId);
         auto device = deviceTable.at(deviceId);
         DeviceDescription description;
         description.name = device.name;

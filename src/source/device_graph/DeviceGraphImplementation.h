@@ -34,7 +34,7 @@ namespace itk {
         virtual void removeDevice(int deviceId) override;
 
         virtual void connect(IndexType sourceId, IndexType targetId) override;
-        virtual void connect(IndexType sourceId, IndexType targetId, IndexType parameterId);
+        virtual void connect(IndexType sourceId, IndexType targetId, IndexType parameterId) override;
         virtual void disconnect(IndexType sourceId, IndexType targetId) override;
         virtual bool isConnected(IndexType sourceId, IndexType targetId) override;
         virtual bool isConnected(IndexType sourceId, IndexType targetId, IndexType parameterId) override;

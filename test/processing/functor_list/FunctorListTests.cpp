@@ -45,10 +45,10 @@ BOOST_AUTO_TEST_SUITE( FunctorListTests )
         functorList.push_back(TestFunctor::Ptr(new TestFunctor(4)));
         auto left = DataBuffer(5000);
         auto right = DataBuffer(5000);
-        OutputChannels dataBegin { begin(left), begin(right) };
-        OutputChannels dataEnd { end(left), end(right) };
-        InputChannels inDataBegin { begin(left), begin(right) };
-        InputChannels inDataEnd { end(left), end(right) };
+        OutputChannels dataBegin { {begin(left), begin(right)} };
+        OutputChannels dataEnd { {end(left), end(right)} };
+        InputChannels inDataBegin { {begin(left), begin(right)} };
+        InputChannels inDataEnd { {end(left), end(right)} };
         AudioFunctor::ParameterDeviceMap parameterMap;
         functorList(inDataBegin, inDataEnd, dataBegin, dataEnd, parameterMap);
         auto compareValue = std::vector<double>(5000);

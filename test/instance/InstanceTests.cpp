@@ -30,8 +30,8 @@ BOOST_AUTO_TEST_SUITE( InstanceTests )
         parameters->setParameterValue(2, 2, 3.0);
         auto left = DataBuffer(bufferSize);
         auto right = DataBuffer(bufferSize);
-        OutputChannels beginOut { begin(left), begin(right) };
-        OutputChannels endOut { end(left), end(right) };
+        OutputChannels beginOut { {begin(left), begin(right)} };
+        OutputChannels endOut { {end(left), end(right)} };
         (*instance)(beginOut, endOut);
         auto expected = DataBuffer(bufferSize);
         for (auto it = begin(expected); it != end(expected); ++it) {
@@ -48,8 +48,8 @@ BOOST_AUTO_TEST_SUITE( InstanceTests )
         parameters->setParameterValue(0, 0, 1.0);
         auto left = DataBuffer(bufferSize);
         auto right = DataBuffer(bufferSize);
-        OutputChannels beginOut { begin(left), begin(right) };
-        OutputChannels endOut { end(left), end(right) };
+        OutputChannels beginOut { {begin(left), begin(right)} };
+        OutputChannels endOut { {end(left), end(right)} };
         (*instance)(beginOut, endOut);
         auto expected = DataBuffer(bufferSize);
         for (auto it = begin(expected); it != end(expected); ++it) {

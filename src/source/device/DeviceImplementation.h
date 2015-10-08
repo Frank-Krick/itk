@@ -13,7 +13,7 @@ namespace itk {
 
     class DeviceImplementation : public Device {
     public:
-        virtual std::tuple<Iter, Iter> availableParameters();
+        virtual std::tuple<Iter, Iter> availableParameters() override;
         virtual DeviceType deviceType() override;
         void deviceType(DeviceType type);
         void functor(Functor::Ptr functor);
