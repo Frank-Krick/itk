@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.1.3)
 
 project(instrument_tool_kit)
 set(itk_VERSION_MAJOR 0)
@@ -6,8 +6,24 @@ set(itk_VERSION_MINOR 1)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y")
 
+find_package(Boost 1.58.0)
+if(Boost_FOUND)
+    SET(Boost_USE_STATIC_LIBS OFF)
+    SET(Boost_USE_MULTITHREADED ON)
+    SET(Boost_USE_STATIC_RUNTIME OFF)
+    FIND_PACKAGE(Boost 1.45.0 COMPONENTS python)
+elseif(NOT Boost_FOUND)
+    MESSAGE(FATAL_ERROR "Coulnd't find boost.")
+endif()
+
+find_package(PythonLibs)
+if(NOT PYTHONLIBS_FOUND)
+    MESSAGE(FATAL_ERROR "Coulnd't find python libs.")
+endif()
+
 include_directories(
-        /Users/frank/Development/c++/libraries/boost_1_59_0
+        ${Boost_INCLUDE_DIRS}
+        ${PYTHON_INCLUDE_DIRS}
         src/include)
 
 set(SOURCE_FILES
@@ -51,6 +67,8 @@ set(SOURCE_FILES
         src/include/processing/generator/ControlFunctor.cpp
         src/include/processing/generator/ControlFunctor.h)
 
+set(PYTHON_WRAPPER)
+
 set(TEST_FILES
         test/device_graph/DeviceGraphTests.cpp
         test/device/DeviceTests.cpp
@@ -71,7 +89,13 @@ set(TEST_FILES
         test/test_data/device/TestFunctors.h
         test/test_data/device/TestFunctorLists.cpp
         test/test_data/device/TestFunctorLists.h
-        test/instance/InstanceImplementationTests.cpp test/test_data/device/InputCopyAudioFunctor.cpp test/test_data/device/InputCopyAudioFunctor.h)
+        test/instance/InstanceImplementationTests.cpp
+        test/test_data/device/InputCopyAudioFunctor.cpp
+        test/test_data/device/InputCopyAudioFunctor.h)
 
 add_executable(instrument_tool_kit src/source/main.cpp ${SOURCE_FILES})
 add_executable(itk_tests ${TEST_FILES} ${SOURCE_FILES})
+
+add_library(itk_python SHARED ${PYTHON_WRAPPER} ${SOURCE_FILES})
+target_link_libraries(itk_python
+        ${Boost_LIBRARIES})
