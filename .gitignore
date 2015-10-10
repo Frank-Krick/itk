@@ -18,3 +18,7 @@
 .idea/workspace.xml
 
 build/Debug/itk.so
+
+.idea/codeStyleSettings.xml
+
+build/Debug/libitk_python.dylib

@@ -66,7 +66,10 @@ set(SOURCE_FILES
         src/source/device/DeviceRegistry.cpp
         src/include/device/DeviceRegistry.h)
 
-set(PYTHON_WRAPPER src/wrapper/itk.cpp)
+set(PYTHON_WRAPPER
+        src/wrapper/itk.cpp
+        src/wrapper/device/PyDeviceRegistry.cpp
+        src/wrapper/device/PyDeviceRegistry.h)
 
 set(TEST_FILES
         test/device_graph/DeviceGraphTests.cpp
@@ -96,7 +99,9 @@ add_executable(instrument_tool_kit src/source/main.cpp ${SOURCE_FILES})
 
 add_executable(itk_tests ${TEST_FILES} ${SOURCE_FILES})
 
+set(MY_BOOST_PYTHON /Users/frank/Development/boost/python/boost.python/build/Debug/libboost_python.a)
+
 add_library(itk_python SHARED ${PYTHON_WRAPPER} ${SOURCE_FILES})
 target_link_libraries(itk_python
-        ${Boost_LIBRARIES}
+        ${MY_BOOST_PYTHON}
         ${PYTHON_LIBRARY})

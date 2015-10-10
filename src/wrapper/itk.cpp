@@ -5,7 +5,8 @@
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 #include <device/Device.h>
-#include <device/DeviceRegistry.h>
+
+#include "device/PyDeviceRegistry.h"
 
 namespace boost {
     template<class T>
@@ -19,17 +20,15 @@ BOOST_PYTHON_MODULE(itk)
     using boost::noncopyable;
     using boost::python::vector_indexing_suite;
     using itk::Device;
-    using itk::DeviceRegistry;
+    using itk::wrapper::PyDeviceRegistry;
 
-    class_<Device, Device::Ptr, Device*, noncopyable>("Device", no_init)
+    class_<Device, Device::Ptr, noncopyable>("Device", no_init)
             .add_property("name", &Device::name)
             .add_property("description", &Device::description)
             .add_property("deviceType", &Device::deviceType);
 
-    boost::python::register_ptr_to_python<Device::Ptr>();
-
-    class_<DeviceRegistry>("DeviceRegistry")
-            .def("registeredDevices", &DeviceRegistry::registeredDevices);
+    class_<PyDeviceRegistry>("DeviceRegistry")
+            .def("registeredDevices", &PyDeviceRegistry::registeredDevices);
 }
 
 #endif //INSTRUMENT_TOOL_KIT_ITK_H
