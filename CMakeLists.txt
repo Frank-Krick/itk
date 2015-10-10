@@ -101,7 +101,14 @@ add_executable(itk_tests ${TEST_FILES} ${SOURCE_FILES})
 
 set(MY_BOOST_PYTHON /Users/frank/Development/boost/python/boost.python/build/Debug/libboost_python.a)
 
+set(LIBRARY_OUTPUT_PATH
+        /Users/frank/Development/itk_full/itk/build/Debug/itk.so)
+
+
 add_library(itk_python SHARED ${PYTHON_WRAPPER} ${SOURCE_FILES})
 target_link_libraries(itk_python
         ${MY_BOOST_PYTHON}
         ${PYTHON_LIBRARY})
+set_target_properties(itk_python PROPERTIES OUTPUT_NAME itk)
+set_target_properties(itk_python PROPERTIES PREFIX "")
+set_target_properties(itk_python PROPERTIES SUFFIX .so)
