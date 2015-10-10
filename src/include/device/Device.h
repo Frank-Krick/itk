@@ -25,10 +25,18 @@ namespace itk {
         typedef ParameterList::iterator Iter;
 
         virtual std::tuple<Iter, Iter> availableParameters() = 0;
-        virtual DeviceType deviceType() = 0;
         virtual Functor::Ptr functor(IndexType deviceId) = 0;
 
+        std::string name() { return _name; }
+        std::string description() { return _description; };
+        DeviceType deviceType() { return _deviceType; };
+
         virtual ~Device() {};
+
+    protected:
+        std::string _name = "";
+        std::string _description = "";
+        DeviceType _deviceType = DeviceType::AUDIO;
     };
 
 }

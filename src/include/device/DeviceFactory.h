@@ -12,6 +12,7 @@ namespace itk {
     class DeviceFactory {
     public:
         static Device::Ptr createDevice(DeviceType type);
+        static Device::Ptr createDevice(std::string name, std::string description, DeviceType type);
     };
 
 }

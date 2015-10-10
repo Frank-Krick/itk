@@ -6,6 +6,8 @@ set(itk_VERSION_MINOR 1)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y")
 
+set(PYTHON_LIBRARY /usr/local/Cellar/python/2.7.9/Frameworks/Python.framework/Versions/2.7/lib/libpython2.7.dylib)
+
 find_package(Boost 1.58.0)
 if(Boost_FOUND)
     SET(Boost_USE_STATIC_LIBS OFF)
@@ -16,14 +18,9 @@ elseif(NOT Boost_FOUND)
     MESSAGE(FATAL_ERROR "Coulnd't find boost.")
 endif()
 
-find_package(PythonLibs)
-if(NOT PYTHONLIBS_FOUND)
-    MESSAGE(FATAL_ERROR "Coulnd't find python libs.")
-endif()
-
 include_directories(
         ${Boost_INCLUDE_DIRS}
-        ${PYTHON_INCLUDE_DIRS}
+        /usr/local/Cellar/python/2.7.9/Frameworks/Python.framework/Headers
         src/include)
 
 set(SOURCE_FILES
@@ -65,9 +62,11 @@ set(SOURCE_FILES
         src/source/processing/instance/InstanceImplementation.cpp
         src/source/processing/instance/InstanceImplementation.h
         src/include/processing/generator/ControlFunctor.cpp
-        src/include/processing/generator/ControlFunctor.h)
+        src/include/processing/generator/ControlFunctor.h
+        src/source/device/DeviceRegistry.cpp
+        src/include/device/DeviceRegistry.h)
 
-set(PYTHON_WRAPPER)
+set(PYTHON_WRAPPER src/wrapper/itk.cpp)
 
 set(TEST_FILES
         test/device_graph/DeviceGraphTests.cpp
@@ -94,8 +93,10 @@ set(TEST_FILES
         test/test_data/device/InputCopyAudioFunctor.h)
 
 add_executable(instrument_tool_kit src/source/main.cpp ${SOURCE_FILES})
+
 add_executable(itk_tests ${TEST_FILES} ${SOURCE_FILES})
 
 add_library(itk_python SHARED ${PYTHON_WRAPPER} ${SOURCE_FILES})
 target_link_libraries(itk_python
-        ${Boost_LIBRARIES})
+        ${Boost_LIBRARIES}
+        ${PYTHON_LIBRARY})

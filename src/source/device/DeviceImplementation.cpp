@@ -12,12 +12,8 @@ namespace itk {
         return tuple<Iter, Iter>(parameters.begin(), parameters.end());
     }
 
-    DeviceType DeviceImplementation::deviceType() {
-        return type;
-    }
-
     void DeviceImplementation::deviceType(DeviceType type) {
-        this->type = type;
+        this->_deviceType = type;
     }
 
     void DeviceImplementation::functor(Functor::Ptr functor) {
@@ -29,4 +25,12 @@ namespace itk {
         return _functor->clone(deviceId);
     }
 
+
+    void DeviceImplementation::name(std::string name) {
+        _name = name;
+    }
+
+    void DeviceImplementation::description(std::string description) {
+        _description = description;
+    }
 }
