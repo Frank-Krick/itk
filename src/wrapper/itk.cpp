@@ -16,10 +16,12 @@ namespace boost {
 BOOST_PYTHON_MODULE(itk)
 {
     using boost::python::class_;
+    using boost::python::enum_;
     using boost::python::no_init;
     using boost::noncopyable;
     using boost::python::vector_indexing_suite;
     using itk::Device;
+    using itk::DeviceType;
     using itk::wrapper::PyDeviceRegistry;
 
     class_<Device, Device::Ptr, noncopyable>("Device", no_init)
@@ -29,6 +31,10 @@ BOOST_PYTHON_MODULE(itk)
 
     class_<PyDeviceRegistry>("DeviceRegistry")
             .def("registeredDevices", &PyDeviceRegistry::registeredDevices);
+
+    enum_<DeviceType>("DeviceType")
+            .value("Audio", DeviceType::AUDIO)
+            .value("Control", DeviceType::CONTROL);
 }
 
 #endif //INSTRUMENT_TOOL_KIT_ITK_H
