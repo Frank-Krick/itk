@@ -5,6 +5,8 @@
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 #include <device/Device.h>
+#include <device_graph/DeviceGraph.h>
+#include <device_graph/DeviceGraphFactory.h>
 
 #include "device/PyDeviceRegistry.h"
 
@@ -23,6 +25,8 @@ BOOST_PYTHON_MODULE(itk)
     using itk::Device;
     using itk::DeviceType;
     using itk::wrapper::PyDeviceRegistry;
+    using itk::DeviceGraph;
+    using itk::DeviceGraphFactory;
 
     class_<Device, Device::Ptr, noncopyable>("Device", no_init)
             .add_property("name", &Device::name)
@@ -35,6 +39,11 @@ BOOST_PYTHON_MODULE(itk)
     enum_<DeviceType>("DeviceType")
             .value("Audio", DeviceType::AUDIO)
             .value("Control", DeviceType::CONTROL);
+
+    class_<DeviceGraph, DeviceGraph::Ptr, noncopyable>("DeviceGraph", no_init )
+            .def("add_device", &DeviceGraph::addDevice)
+            .def("create", &DeviceGraphFactory::createDeviceGraph)
+            .staticmethod("create");
 }
 
 #endif //INSTRUMENT_TOOL_KIT_ITK_H

@@ -69,7 +69,9 @@ set(SOURCE_FILES
 set(PYTHON_WRAPPER
         src/wrapper/itk.cpp
         src/wrapper/device/PyDeviceRegistry.cpp
-        src/wrapper/device/PyDeviceRegistry.h)
+        src/wrapper/device/PyDeviceRegistry.h
+        src/wrapper/device_graph/PyDeviceGraph.cpp
+        src/wrapper/device_graph/PyDeviceGraph.h)
 
 set(TEST_FILES
         test/device_graph/DeviceGraphTests.cpp
