@@ -33,4 +33,9 @@ namespace itk {
     void DeviceImplementation::description(std::string description) {
         _description = description;
     }
+
+void DeviceImplementation::addParameter(ParameterDescription parameter) {
+    _parameters.push_back(parameter);
+}
+
 }

@@ -4,18 +4,26 @@
 #include <boost/python/object.hpp>
 
 #include <device_graph/DeviceGraph.h>
+#include <device_graph/DeviceGraphFactory.h>
+
+#include "../device/PyDevice.h"
 
 namespace itk { namespace wrapper {
 
-    class PyDeviceGraph {
-    public:
-        PyDeviceGraph(const DeviceGraph::Ptr &_deviceGraph)
-                : _deviceGraph(_deviceGraph) { }
+class PyDeviceGraph {
+public:
+    PyDeviceGraph()
+            : _deviceGraph(DeviceGraphFactory::createDeviceGraph()) {}
 
-        IndexType addDevice(boost::python::object pyDevice);
-    private:
-        DeviceGraph::Ptr _deviceGraph;
-    };
+    IndexType addDevice(PyDevice device);
+    void connect(IndexType sourceId, IndexType targetId);
+    void connect(IndexType sourceId, IndexType targetId, IndexType parameterId);
+    bool isConnected(IndexType sourceId, IndexType targetId);
+    bool isConnected(IndexType sourceId, IndexType targetTd, IndexType parameterId);
+
+private:
+    DeviceGraph::Ptr _deviceGraph;
+};
 
 }}
 

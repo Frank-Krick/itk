@@ -9,6 +9,8 @@
 #include <device_graph/DeviceGraphFactory.h>
 
 #include "device/PyDeviceRegistry.h"
+#include "device/PyDevice.h"
+#include "device_graph/PyDeviceGraph.h"
 
 namespace boost {
     template<class T>
@@ -28,6 +30,8 @@ BOOST_PYTHON_MODULE(itk)
     using itk::DeviceGraph;
     using itk::DeviceGraphFactory;
     using itk::ParameterDescription;
+    using itk::wrapper::PyDevice;
+    using itk::wrapper::PyDeviceGraph;
 
     class_<ParameterDescription>("ParameterDescription", no_init)
             .def_readonly("name", &ParameterDescription::name)
@@ -36,10 +40,11 @@ BOOST_PYTHON_MODULE(itk)
             .def_readonly("min", &ParameterDescription::min)
             .def_readonly("id", &ParameterDescription::id);
 
-    class_<Device, Device::Ptr, noncopyable>("Device", no_init)
-            .add_property("name", &Device::name)
-            .add_property("description", &Device::description)
-            .add_property("deviceType", &Device::deviceType);
+    class_<PyDevice>("Device", no_init)
+            .add_property("name", &PyDevice::name)
+            .add_property("description", &PyDevice::description)
+            .add_property("deviceType", &PyDevice::deviceType)
+            .add_property("available_parameters", &PyDevice::availableParameters);
 
     class_<PyDeviceRegistry>("DeviceRegistry")
             .def("registeredDevices", &PyDeviceRegistry::registeredDevices);
@@ -48,28 +53,26 @@ BOOST_PYTHON_MODULE(itk)
             .value("Audio", DeviceType::AUDIO)
             .value("Control", DeviceType::CONTROL);
 
-    void (DeviceGraph::*connect_audio)(
+    void (PyDeviceGraph::*connect_audio)(
             typename itk::IndexType,
-            typename itk::IndexType) = &DeviceGraph::connect;
+            typename itk::IndexType) = &PyDeviceGraph::connect;
 
-    void (DeviceGraph::*connect_control)(
+    void (PyDeviceGraph::*connect_control)(
             typename itk::IndexType,
             typename itk::IndexType,
-            typename itk::IndexType) = &DeviceGraph::connect;
+            typename itk::IndexType) = &PyDeviceGraph::connect;
 
-    bool (DeviceGraph::*isConnected_audio)(
+    bool (PyDeviceGraph::*isConnected_audio)(
             typename itk::IndexType,
-            typename itk::IndexType) = &DeviceGraph::isConnected;
+            typename itk::IndexType) = &PyDeviceGraph::isConnected;
 
-    bool (DeviceGraph::*isConnected_control)(
+    bool (PyDeviceGraph::*isConnected_control)(
             typename itk::IndexType,
             typename itk::IndexType,
-            typename itk::IndexType) = &DeviceGraph::isConnected;
+            typename itk::IndexType) = &PyDeviceGraph::isConnected;
 
-    class_<DeviceGraph, DeviceGraph::Ptr, noncopyable>("DeviceGraph", no_init)
-            .def("add_device", &DeviceGraph::addDevice)
-            .def("create", &DeviceGraphFactory::createDeviceGraph)
-            .staticmethod("create")
+    class_<PyDeviceGraph, noncopyable>("DeviceGraph")
+            .def("add_device", &PyDeviceGraph::addDevice)
             .def("connect", connect_audio)
             .def("connect", connect_control)
             .def("is_connected", isConnected_audio)

@@ -9,25 +9,76 @@
 
 namespace itk {
 
-    DeviceRegistry::DeviceRegistry() {
-        _registeredDevices = {
-                DeviceFactory::createDevice("Test device 01", "Description of the test device", DeviceType::AUDIO),
-                DeviceFactory::createDevice("Test device 02", "Description of the test device", DeviceType::AUDIO),
-                DeviceFactory::createDevice("Test device 03", "Description of the test device", DeviceType::CONTROL),
-                DeviceFactory::createDevice("Test device 04", "Description of the test device", DeviceType::AUDIO),
-                DeviceFactory::createDevice("Test device 05", "Description of the test device", DeviceType::AUDIO),
-                DeviceFactory::createDevice("Test device 06", "Description of the test device", DeviceType::AUDIO),
-                DeviceFactory::createDevice("Test device 07", "Description of the test device", DeviceType::AUDIO),
-                DeviceFactory::createDevice("Test device 08", "Description of the test device", DeviceType::CONTROL),
-                DeviceFactory::createDevice("Test device 09", "Description of the test device", DeviceType::AUDIO),
-                DeviceFactory::createDevice("Test device 10", "Description of the test device", DeviceType::AUDIO),
-                DeviceFactory::createDevice("Test device 11", "Description of the test device", DeviceType::CONTROL),
-                DeviceFactory::createDevice("Test device 12", "Description of the test device", DeviceType::AUDIO)
-        };
-    }
+DeviceRegistry::DeviceRegistry() {
+    using std::begin;
+    using std::end;
 
-    DeviceRegistry::DeviceList DeviceRegistry::registeredDevices() {
-        return _registeredDevices;
-    }
+    std::vector<ParameterDescription> parameters = {
+            ParameterDescription(),
+            ParameterDescription(),
+            ParameterDescription()
+    };
+
+    _registeredDevices = {
+            DeviceFactory::createDevice(
+                    "Test device 01",
+                    "Description of the test device",
+                    DeviceType::AUDIO,
+                    begin(parameters),
+                    end(parameters)),
+            DeviceFactory::createDevice(
+                    "Test device 02",
+                    "Description of the test device",
+                    DeviceType::AUDIO,
+                    begin(parameters),
+                    end(parameters)),
+            DeviceFactory::createDevice(
+                    "Test device 03",
+                    "Description of the test device",
+                    DeviceType::CONTROL,
+                    begin(parameters),
+                    end(parameters)),
+            DeviceFactory::createDevice(
+                    "Test device 04",
+                    "Description of the test device",
+                    DeviceType::AUDIO,
+                    begin(parameters),
+                    end(parameters)),
+            DeviceFactory::createDevice(
+                    "Test device 05",
+                    "Description of the test device",
+                    DeviceType::AUDIO,
+                    begin(parameters),
+                    end(parameters)),
+            DeviceFactory::createDevice(
+                    "Test device 06",
+                    "Description of the test device",
+                    DeviceType::AUDIO,
+                    begin(parameters),
+                    end(parameters)),
+            DeviceFactory::createDevice(
+                    "Test device 07",
+                    "Description of the test device",
+                    DeviceType::AUDIO,
+                    begin(parameters),
+                    end(parameters)),
+            DeviceFactory::createDevice(
+                    "Test device 08",
+                    "Description of the test device",
+                    DeviceType::CONTROL,
+                    begin(parameters),
+                    end(parameters)),
+            DeviceFactory::createDevice(
+                    "Test device 09",
+                    "Description of the test device",
+                    DeviceType::AUDIO,
+                    begin(parameters),
+                    end(parameters)),
+    };
+}
+
+DeviceRegistry::DeviceList DeviceRegistry::registeredDevices() {
+    return _registeredDevices;
+}
 
 }
