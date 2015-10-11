@@ -1,20 +1,17 @@
-//
-// Created by Frank Krick on 9/5/15.
-//
 #include <device_graph/DeviceGraph.h>
 
 namespace itk {
 
-
-    std::ostream & operator << (std::ostream & stream, const ConnectionType & type) {
-        switch (type) {
-            case ConnectionType::AUDIO:
-                stream << "Audio";
-                break;
-            case ConnectionType::CONTROL:
-                stream << "Control";
-                break;
-        }
-        return stream;
+std::ostream & operator << (std::ostream & stream, const ConnectionType & type) {
+    switch (type) {
+        case ConnectionType::AUDIO:
+            stream << "Audio";
+            break;
+        case ConnectionType::CONTROL:
+            stream << "Control";
+            break;
     }
+    return stream;
+}
+
 }

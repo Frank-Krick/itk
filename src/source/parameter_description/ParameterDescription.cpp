@@ -7,11 +7,11 @@
 namespace itk {
 
     bool operator<(const ParameterDescription &lhs, const ParameterDescription &rhs) {
-        return lhs.id < rhs.id;
+        return lhs.id() < rhs.id();
     }
 
     bool operator==(const ParameterDescription &lhs, const ParameterDescription &rhs) {
-        return lhs.id == rhs.id;
+        return lhs.id() == rhs.id();
     }
 
 }

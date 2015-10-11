@@ -13,6 +13,13 @@ namespace itk {
     public:
         static Device::Ptr createDevice(DeviceType type);
         static Device::Ptr createDevice(std::string name, std::string description, DeviceType type);
+        template <class Iter>
+        static Device::Ptr createDevice(
+                std::string name,
+                std::string description,
+                DeviceType type,
+                Iter deviceParameterBegin,
+                Iter deviceParameterEnd);
     };
 
 }

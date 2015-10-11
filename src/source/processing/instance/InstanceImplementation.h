@@ -98,7 +98,7 @@ namespace itk {
             for (auto parameterPair : parameterPairs) {
                 auto deviceId = parameterPair.first;
                 for (auto parameter : parameterPair.second) {
-                    auto parameterId = parameter.id;
+                    auto parameterId = parameter.id();
                     auto sourceParameter = parameterMap[deviceId][parameterId];
                     Parameter p;
                     p.begin = begin(sourceParameter->buffer);
