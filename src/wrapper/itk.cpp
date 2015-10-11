@@ -40,10 +40,15 @@ BOOST_PYTHON_MODULE(itk)
             .value("Audio", DeviceType::AUDIO)
             .value("Control", DeviceType::CONTROL);
 
+    void (DeviceGraph::*connect_audio)(typename itk::IndexType, typename itk::IndexType) = &DeviceGraph::connect;
+    void (DeviceGraph::*connect_control)(typename itk::IndexType, typename itk::IndexType, typename itk::IndexType) = &DeviceGraph::connect;
+
     class_<DeviceGraph, DeviceGraph::Ptr, noncopyable>("DeviceGraph", no_init )
             .def("add_device", &DeviceGraph::addDevice)
             .def("create", &DeviceGraphFactory::createDeviceGraph)
-            .staticmethod("create");
+            .staticmethod("create")
+            .def("connect", connect_audio)
+            .def("connect", connect_control);
 }
 
 #endif //INSTRUMENT_TOOL_KIT_ITK_H
