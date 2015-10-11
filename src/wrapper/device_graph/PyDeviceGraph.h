@@ -2,6 +2,7 @@
 #define INSTRUMENT_TOOL_KIT_PYDEVICEGRAPH_H
 
 #include <boost/python/object.hpp>
+#include <boost/python/list.hpp>
 
 #include <device_graph/DeviceGraph.h>
 #include <device_graph/DeviceGraphFactory.h>
@@ -20,6 +21,8 @@ public:
     void connect(IndexType sourceId, IndexType targetId, IndexType parameterId);
     bool isConnected(IndexType sourceId, IndexType targetId);
     bool isConnected(IndexType sourceId, IndexType targetTd, IndexType parameterId);
+
+    boost::python::list devices();
 
 private:
     DeviceGraph::Ptr _deviceGraph;
