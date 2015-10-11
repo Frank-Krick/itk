@@ -9,7 +9,7 @@ namespace itk {
     using namespace std;
 
     tuple<Device::Iter, Device::Iter> DeviceImplementation::availableParameters() {
-        return tuple<Iter, Iter>(parameters.begin(), parameters.end());
+        return tuple<Iter, Iter>(_parameters.begin(), _parameters.end());
     }
 
     void DeviceImplementation::deviceType(DeviceType type) {
@@ -18,7 +18,7 @@ namespace itk {
 
     void DeviceImplementation::functor(Functor::Ptr functor) {
         this->_functor = functor;
-        parameters = functor->parameterList();
+        _parameters = functor->parameterList();
     }
 
     Functor::Ptr DeviceImplementation::functor(IndexType deviceId) {

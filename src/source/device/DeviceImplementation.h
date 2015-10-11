@@ -23,7 +23,7 @@ namespace itk {
 
     private:
         Functor::Ptr _functor;
-        ParameterList parameters;
+        ParameterList _parameters;
     };
 
 }

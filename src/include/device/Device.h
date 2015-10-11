@@ -15,29 +15,29 @@
 
 namespace itk {
 
-    enum class DeviceType { AUDIO, CONTROL };
+enum class DeviceType { AUDIO, CONTROL };
 
-    std::ostream & operator << (std::ostream & stream, const DeviceType & type);
+std::ostream & operator << (std::ostream & stream, const DeviceType & type);
 
-    struct Device {
-    public:
-        typedef std::shared_ptr<Device> Ptr;
-        typedef ParameterList::iterator Iter;
+struct Device {
+public:
+    typedef std::shared_ptr<Device> Ptr;
+    typedef ParameterList::iterator Iter;
 
-        virtual std::tuple<Iter, Iter> availableParameters() = 0;
-        virtual Functor::Ptr functor(IndexType deviceId) = 0;
+    virtual std::tuple<Iter, Iter> availableParameters() = 0;
+    virtual Functor::Ptr functor(IndexType deviceId) = 0;
 
-        std::string name() { return _name; }
-        std::string description() { return _description; };
-        DeviceType deviceType() { return _deviceType; };
+    std::string name() { return _name; }
+    std::string description() { return _description; };
+    DeviceType deviceType() { return _deviceType; };
 
-        virtual ~Device() {};
+    virtual ~Device() {};
 
-    protected:
-        std::string _name = "";
-        std::string _description = "";
-        DeviceType _deviceType = DeviceType::AUDIO;
-    };
+protected:
+    std::string _name = "";
+    std::string _description = "";
+    DeviceType _deviceType = DeviceType::AUDIO;
+};
 
 }
 

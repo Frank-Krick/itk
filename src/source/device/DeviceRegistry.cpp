@@ -22,7 +22,7 @@ namespace itk {
                 DeviceFactory::createDevice("Test device 09", "Description of the test device", DeviceType::AUDIO),
                 DeviceFactory::createDevice("Test device 10", "Description of the test device", DeviceType::AUDIO),
                 DeviceFactory::createDevice("Test device 11", "Description of the test device", DeviceType::CONTROL),
-                DeviceFactory::createDevice("Test device 12", "Description of the test device", DeviceType::AUDIO),
+                DeviceFactory::createDevice("Test device 12", "Description of the test device", DeviceType::AUDIO)
         };
     }
 

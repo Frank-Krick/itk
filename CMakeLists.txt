@@ -71,7 +71,7 @@ set(PYTHON_WRAPPER
         src/wrapper/device/PyDeviceRegistry.cpp
         src/wrapper/device/PyDeviceRegistry.h
         src/wrapper/device_graph/PyDeviceGraph.cpp
-        src/wrapper/device_graph/PyDeviceGraph.h)
+        src/wrapper/device_graph/PyDeviceGraph.h src/wrapper/device/PyDevice.cpp src/wrapper/device/PyDevice.h)
 
 set(TEST_FILES
         test/device_graph/DeviceGraphTests.cpp
