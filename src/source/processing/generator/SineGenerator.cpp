@@ -29,12 +29,7 @@ namespace itk {
     }
 
     ParameterList SineGenerator::parameterList() {
-        auto frequency = ParameterDescription();
-        frequency.description = "Frequency of the Generator";
-        frequency.id = 0;
-        frequency.max = 22000;
-        frequency.min = 1;
-        frequency.name = "Frequency";
+        auto frequency = ParameterDescription(0, "Frequency", "Frequency of the Generator", 1, 22000);
 
         ParameterList parameterList { frequency };
         return parameterList;

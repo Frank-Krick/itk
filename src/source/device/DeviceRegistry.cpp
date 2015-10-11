@@ -1,7 +1,3 @@
-//
-// Created by Frank Krick on 10/8/15.
-//
-
 #include <device/DeviceRegistry.h>
 #include <device/DeviceFactory.h>
 
@@ -14,9 +10,9 @@ DeviceRegistry::DeviceRegistry() {
     using std::end;
 
     std::vector<ParameterDescription> parameters = {
-            ParameterDescription(),
-            ParameterDescription(),
-            ParameterDescription()
+            ParameterDescription(0, "Frequency", "Frequency of the Generator", 1, 22000),
+            ParameterDescription(1, "Param 2", "Frequency of the Generator", 0, 1),
+            ParameterDescription(2, "Param 3", "Frequency of the Generator", 1, 300)
     };
 
     _registeredDevices = {

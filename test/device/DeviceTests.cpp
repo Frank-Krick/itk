@@ -12,9 +12,9 @@ using namespace std;
 BOOST_AUTO_TEST_SUITE( DeviceTests )
 
     bool compare_test(const ParameterDescription & lhs, const ParameterDescription & rhs) {
-        return lhs.id == rhs.id &&
-               lhs.description == rhs.description &&
-               lhs.name == rhs.name;
+        return lhs.id() == rhs.id() &&
+               lhs.description() == rhs.description() &&
+               lhs.name() == rhs.name();
     }
 
     BOOST_AUTO_TEST_CASE( new_device_has_empty_parameter_table ) {

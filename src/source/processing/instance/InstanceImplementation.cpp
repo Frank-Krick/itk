@@ -244,7 +244,7 @@ namespace itk {
             auto deviceId = functorParameters.first;
             auto parameterList = functorParameters.second;
             for (auto parameter : parameterList) {
-                auto parameterId = parameter.id;
+                auto parameterId = parameter.id();
                 auto wrapper = new ParameterWrapper();
                 parameterMap[deviceId][parameterId] = ParameterWrapper::Ptr(wrapper);
             }
@@ -267,7 +267,7 @@ namespace itk {
             auto deviceId = functorParameters.first;
             auto parameterList = functorParameters.second;
             for (auto parameter : parameterList) {
-                auto parameterId = parameter.id;
+                auto parameterId = parameter.id();
                 auto wrapper = new ParameterWrapper();
                 parameterMap[deviceId][parameterId] = ParameterWrapper::Ptr(wrapper);
             }
