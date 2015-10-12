@@ -71,12 +71,17 @@ BOOST_PYTHON_MODULE(itk)
             typename itk::IndexType,
             typename itk::IndexType) = &PyDeviceGraph::isConnected;
 
+    class_<DeviceGraph::DeviceDescription>("DeviceDescription")
+            .def_readonly("name", &DeviceGraph::DeviceDescription::name)
+            .def_readonly("deviceId", &DeviceGraph::DeviceDescription::deviceId);
+
     class_<PyDeviceGraph, noncopyable>("DeviceGraph")
             .def("add_device", &PyDeviceGraph::addDevice)
             .def("connect", connect_audio)
             .def("connect", connect_control)
             .def("is_connected", isConnected_audio)
-            .def("is_connected", isConnected_control);
+            .def("is_connected", isConnected_control)
+            .add_property("devices", &PyDeviceGraph::devices);
 }
 
 #endif //INSTRUMENT_TOOL_KIT_ITK_H

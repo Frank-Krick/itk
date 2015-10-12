@@ -22,4 +22,13 @@ bool PyDeviceGraph::isConnected(IndexType sourceId, IndexType targetTd, IndexTyp
     return _deviceGraph->isConnected(sourceId, targetTd, parameterId);
 }
 
+boost::python::list PyDeviceGraph::devices() {
+    auto devices = _deviceGraph->devices();
+    boost::python::list result;
+    for (auto device : devices) {
+        result.append(device);
+    }
+    return result;
+}
+
 }}

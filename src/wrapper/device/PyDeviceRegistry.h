@@ -6,6 +6,7 @@
 #define INSTRUMENT_TOOL_KIT_PYDEVICEREGISTRY_H
 
 #include <device/DeviceRegistry.h>
+#include <boost/python/list.hpp>
 
 namespace itk { namespace wrapper {
 
