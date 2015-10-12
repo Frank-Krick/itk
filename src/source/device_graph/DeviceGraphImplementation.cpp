@@ -146,4 +146,13 @@ DeviceGraph::DeviceDescription DeviceGraphImplementation::describeDevice(DeviceW
     return description;
 }
 
+DeviceGraph::AudioConnections DeviceGraphImplementation::audioConnections() {
+    AudioConnections result;
+    return result;
+}
+
+DeviceGraph::ControlConnections DeviceGraphImplementation::controlConnections() {
+    ControlConnections result;
+    return result;
+}
 } // namespace itk
