@@ -28,7 +28,7 @@ namespace itk {
         auto start = parameters->second.cbegin();
         auto end = parameters->second.cend();
         for (auto p = start; p != end; ++p) {
-            if (p->id == parameterId) return true;
+            if (parameterId == p->id()) return true;
         }
         return false;
     }

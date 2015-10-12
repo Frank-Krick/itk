@@ -22,3 +22,5 @@ build/Debug/itk.so
 .idea/codeStyleSettings.xml
 
 build/Debug/libitk_python.dylib
+
+build/Debug/itk_tests

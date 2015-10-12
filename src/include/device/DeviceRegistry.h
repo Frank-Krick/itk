@@ -7,7 +7,6 @@
 
 #include <vector>
 #include <boost/smart_ptr/shared_ptr.hpp>
-#include <boost/python/list.hpp>
 
 #include "Device.h"
 

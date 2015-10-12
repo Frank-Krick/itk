@@ -21,9 +21,11 @@ namespace itk {
         void name(std::string name);
         void description(std::string description);
 
+        void addParameter(ParameterDescription parameter);
+
     private:
         Functor::Ptr _functor;
-        ParameterList parameters;
+        ParameterList _parameters;
     };
 
 }

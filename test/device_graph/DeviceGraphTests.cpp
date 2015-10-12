@@ -57,7 +57,6 @@ BOOST_AUTO_TEST_SUITE(DeviceGraphTests)
     BOOST_AUTO_TEST_CASE( connect_control_device ) {
         auto sourceDevice = DeviceFactory::createDevice(DeviceType::CONTROL);
         auto targetDevice = TestDevices::parameterCopyDevice(5, 2);
-
         auto deviceGraph = DeviceGraphFactory::createDeviceGraph();
         auto sourceId = deviceGraph->addDevice(sourceDevice);
         auto targetId = deviceGraph->addDevice(targetDevice);
@@ -86,6 +85,42 @@ BOOST_AUTO_TEST_SUITE(DeviceGraphTests)
         auto sourceId = deviceGraph->addDevice(sourceDevice);
         auto targetId = deviceGraph->addDevice(targetDevice);
         BOOST_CHECK_THROW(deviceGraph->connect(sourceId, targetId, 6), DeviceParameterMissing);
+    }
+
+    BOOST_AUTO_TEST_CASE( return_device_descriptions ) {
+        using std::sort;
+        using std::begin;
+        using std::end;
+        using std::equal;
+
+        std::vector<Device::Ptr> devices {
+            DeviceFactory::createDevice((DeviceType::AUDIO)),
+            DeviceFactory::createDevice((DeviceType::AUDIO)),
+            DeviceFactory::createDevice((DeviceType::AUDIO)),
+            DeviceFactory::createDevice((DeviceType::AUDIO)),
+            DeviceFactory::createDevice((DeviceType::AUDIO))
+        };
+
+        auto deviceGraph = DeviceGraphFactory::createDeviceGraph();
+
+        std::vector<IndexType> deviceIds;
+        for (auto d : devices) {
+            auto deviceId = deviceGraph->addDevice(d);
+            deviceIds.push_back(deviceId);
+        }
+
+        auto descriptions = deviceGraph->devices();
+
+        sort(begin(deviceIds), end(deviceIds));
+        sort(begin(devices), end(devices));
+
+        std::vector<IndexType> keys;
+        for(auto d : descriptions) {
+            keys.push_back(d.deviceId);
+        }
+        sort(begin(keys), end(keys));
+        BOOST_CHECK_EQUAL(deviceIds.size(), devices.size());
+        BOOST_CHECK(equal(begin(deviceIds), end(deviceIds), begin(keys), end(keys)));
     }
 
 BOOST_AUTO_TEST_SUITE_END()

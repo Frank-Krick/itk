@@ -4,12 +4,14 @@
 
 #include "PyDeviceRegistry.h"
 
+#include "PyDevice.h"
+
 namespace itk { namespace wrapper {
 
 boost::python::list PyDeviceRegistry::registeredDevices() {
     auto result = boost::python::list();
     for (auto device : _deviceRegistry.registeredDevices()) {
-        result.append(device);
+        result.append(PyDevice(device));
     }
     return result;
 }

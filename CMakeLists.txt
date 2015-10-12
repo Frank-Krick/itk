@@ -69,7 +69,9 @@ set(SOURCE_FILES
 set(PYTHON_WRAPPER
         src/wrapper/itk.cpp
         src/wrapper/device/PyDeviceRegistry.cpp
-        src/wrapper/device/PyDeviceRegistry.h)
+        src/wrapper/device/PyDeviceRegistry.h
+        src/wrapper/device_graph/PyDeviceGraph.cpp
+        src/wrapper/device_graph/PyDeviceGraph.h src/wrapper/device/PyDevice.cpp src/wrapper/device/PyDevice.h)
 
 set(TEST_FILES
         test/device_graph/DeviceGraphTests.cpp
@@ -101,7 +103,14 @@ add_executable(itk_tests ${TEST_FILES} ${SOURCE_FILES})
 
 set(MY_BOOST_PYTHON /Users/frank/Development/boost/python/boost.python/build/Debug/libboost_python.a)
 
+set(LIBRARY_OUTPUT_PATH
+        /Users/frank/Development/itk_full/itk/build/Debug/itk.so)
+
+
 add_library(itk_python SHARED ${PYTHON_WRAPPER} ${SOURCE_FILES})
 target_link_libraries(itk_python
         ${MY_BOOST_PYTHON}
         ${PYTHON_LIBRARY})
+set_target_properties(itk_python PROPERTIES OUTPUT_NAME itk)
+set_target_properties(itk_python PROPERTIES PREFIX "")
+set_target_properties(itk_python PROPERTIES SUFFIX .so)
