@@ -22,32 +22,26 @@ bool PyDeviceGraph::isConnected(IndexType sourceId, IndexType targetTd, IndexTyp
     return _deviceGraph->isConnected(sourceId, targetTd, parameterId);
 }
 
-boost::python::list PyDeviceGraph::devices() {
-    auto devices = _deviceGraph->devices();
+template <class T>
+boost::python::list to_python_list(T container) {
     boost::python::list result;
-    for (auto device : devices) {
-        result.append(device);
+    for (auto item : container) {
+        result.append(item);
     }
     return result;
+}
+
+boost::python::list PyDeviceGraph::devices() {
+    return to_python_list(_deviceGraph->devices());
 }
 
 
 boost::python::list PyDeviceGraph::audioConnections() {
-    boost::python::list result;
-    auto connections = _deviceGraph->audioConnections();
-    for (auto connection : connections) {
-        result.append(connection);
-    }
-    return result;
+    return to_python_list(_deviceGraph->audioConnections());
 }
 
 boost::python::list PyDeviceGraph::controlConnections() {
-    boost::python::list result;
-    auto connections = _deviceGraph->controlConnections();
-    for (auto connection : connections) {
-        result.append(connection);
-    }
-    return result;
+    return to_python_list(_deviceGraph->controlConnections());
 }
 
 }}
