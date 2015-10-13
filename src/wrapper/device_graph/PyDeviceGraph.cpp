@@ -38,6 +38,7 @@ boost::python::list PyDeviceGraph::audioConnections() {
     for (auto connection : connections) {
         result.append(connection);
     }
+    return result;
 }
 
 boost::python::list PyDeviceGraph::controlConnections() {
@@ -46,6 +47,7 @@ boost::python::list PyDeviceGraph::controlConnections() {
     for (auto connection : connections) {
         result.append(connection);
     }
+    return result;
 }
 
 }}
