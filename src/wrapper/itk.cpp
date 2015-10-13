@@ -75,13 +75,25 @@ BOOST_PYTHON_MODULE(itk)
             .def_readonly("name", &DeviceGraph::DeviceDescription::name)
             .def_readonly("deviceId", &DeviceGraph::DeviceDescription::deviceId);
 
+
+    class_<DeviceGraph::ControlConnection>("ControlConnection")
+            .def_readonly("source", &DeviceGraph::ControlConnection::source)
+            .def_readonly("target", &DeviceGraph::ControlConnection::target)
+            .def_readonly("parameter", &DeviceGraph::ControlConnection::parameterId);
+
+    class_<DeviceGraph::AudioConnection>("AudioConnection")
+            .def_readonly("source", &DeviceGraph::AudioConnection::source)
+            .def_readonly("target", &DeviceGraph::AudioConnection::target);
+
     class_<PyDeviceGraph, noncopyable>("DeviceGraph")
             .def("add_device", &PyDeviceGraph::addDevice)
             .def("connect", connect_audio)
             .def("connect", connect_control)
             .def("is_connected", isConnected_audio)
             .def("is_connected", isConnected_control)
-            .add_property("devices", &PyDeviceGraph::devices);
+            .add_property("devices", &PyDeviceGraph::devices)
+            .add_property("controlConnections", &PyDeviceGraph::controlConnections)
+            .add_property("audioConnections", &PyDeviceGraph::audioConnections);
 }
 
 #endif //INSTRUMENT_TOOL_KIT_ITK_H

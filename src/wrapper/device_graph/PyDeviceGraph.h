@@ -23,6 +23,8 @@ public:
     bool isConnected(IndexType sourceId, IndexType targetTd, IndexType parameterId);
 
     boost::python::list devices();
+    boost::python::list audioConnections();
+    boost::python::list controlConnections();
 
 private:
     DeviceGraph::Ptr _deviceGraph;

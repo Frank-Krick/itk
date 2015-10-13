@@ -31,4 +31,21 @@ boost::python::list PyDeviceGraph::devices() {
     return result;
 }
 
+
+boost::python::list PyDeviceGraph::audioConnections() {
+    boost::python::list result;
+    auto connections = _deviceGraph->audioConnections();
+    for (auto connection : connections) {
+        result.append(connection);
+    }
+}
+
+boost::python::list PyDeviceGraph::controlConnections() {
+    boost::python::list result;
+    auto connections = _deviceGraph->controlConnections();
+    for (auto connection : connections) {
+        result.append(connection);
+    }
+}
+
 }}
