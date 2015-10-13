@@ -33,6 +33,8 @@ public:
     virtual void disconnect(IndexType sourceId, IndexType targetId) override;
     virtual bool isConnected(IndexType sourceId, IndexType targetId) override;
     virtual bool isConnected(IndexType sourceId, IndexType targetId, IndexType parameterId) override;
+    virtual AudioConnections audioConnections();
+    virtual ControlConnections controlConnections();
 
     virtual DeviceGraphInstance::Ptr createInstance() override;
     virtual bool isInstanceUpToDate(DeviceGraphInstance &instance) override;

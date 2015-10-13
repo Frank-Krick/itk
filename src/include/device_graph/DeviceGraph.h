@@ -26,9 +26,22 @@ public:
         IndexType deviceId = 0;
     };
 
+    struct AudioConnection {
+        IndexType source = 0;
+        IndexType target = 0;
+    };
+
+    struct ControlConnection {
+        IndexType source = 0;
+        IndexType target = 0;
+        IndexType parameterId = 0;
+    };
+
     typedef std::shared_ptr<DeviceGraph> Ptr;
     typedef std::vector<IndexType> Keys;
     typedef std::vector<DeviceDescription> DeviceDescriptions;
+    typedef std::vector<AudioConnection> AudioConnections;
+    typedef std::vector<ControlConnection> ControlConnections;
 
     virtual ~DeviceGraph() {};
 
@@ -43,6 +56,8 @@ public:
     virtual void disconnect(IndexType sourceId, IndexType targetId) = 0;
     virtual bool isConnected(IndexType sourceId, IndexType targetId) = 0;
     virtual bool isConnected(IndexType sourceId, IndexType targetTd, IndexType parameterId) = 0;
+    virtual AudioConnections audioConnections() = 0;
+    virtual ControlConnections controlConnections() = 0;
 
     /*
      * Methods to handle devices in the device graph
