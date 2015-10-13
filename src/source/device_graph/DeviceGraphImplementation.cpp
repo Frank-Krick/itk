@@ -148,11 +148,37 @@ DeviceGraph::DeviceDescription DeviceGraphImplementation::describeDevice(DeviceW
 
 DeviceGraph::AudioConnections DeviceGraphImplementation::audioConnections() {
     AudioConnections result;
+    typename Graph::edge_iterator ei_begin, ei_end;
+    tie(ei_begin, ei_end) = edges(graph);
+    for (auto edge = ei_begin; edge != ei_end; ++edge) {
+        if (graph[*edge].type == ConnectionType::AUDIO) {
+            AudioConnection connection;
+            auto sourceVertex = source(*edge, graph);
+            auto targetVertex = target(*edge, graph);
+            connection.source = graph[sourceVertex].deviceId;
+            connection.target = graph[targetVertex].deviceId;
+            result.push_back(connection);
+        }
+    }
     return result;
 }
 
 DeviceGraph::ControlConnections DeviceGraphImplementation::controlConnections() {
     ControlConnections result;
+    typename Graph::edge_iterator ei_begin, ei_end;
+    tie(ei_begin, ei_end) = edges(graph);
+    for (auto edge = ei_begin; edge != ei_end; ++edge) {
+        if (graph[*edge].type == ConnectionType::CONTROL) {
+            ControlConnection connection;
+            auto sourceVertex = source(*edge, graph);
+            auto targetVertex = target(*edge, graph);
+            connection.source = graph[sourceVertex].deviceId;
+            connection.target = graph[targetVertex].deviceId;
+            connection.parameterId = graph[*edge].parameterId;
+            result.push_back(connection);
+        }
+    }
     return result;
 }
+
 } // namespace itk
