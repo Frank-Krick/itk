@@ -26,7 +26,7 @@ IndexType DeviceGraphImplementation::addDevice(Device::Ptr device) {
     return deviceId;
 }
 
-void DeviceGraphImplementation::removeDevice(int deviceId) {
+void DeviceGraphImplementation::removeDevice(IndexType deviceId) {
     auto vertex = vertexFromDeviceId(deviceId);
     clear_vertex(vertex, graph);
     remove_vertex(vertex, graph);
@@ -77,9 +77,7 @@ void DeviceGraphImplementation::connect(IndexType sourceId,
     graph[edge].parameterId = parameterId;
 }
 
-void DeviceGraphImplementation::disconnect(IndexType sourceId, IndexType targetId) {
-
-    }
+void DeviceGraphImplementation::disconnect(IndexType sourceId, IndexType targetId) {}
 
 bool DeviceGraphImplementation::isConnected(IndexType sourceId, IndexType targetId) {
     typename Graph::out_edge_iterator ei, ei_end;
@@ -133,16 +131,16 @@ DeviceGraph::DeviceDescriptions DeviceGraphImplementation::devices() {
     return devices;
 }
 
-DeviceGraph::DeviceDescription DeviceGraphImplementation::describeDevice(IndexType deviceId) {
+DeviceGraph::DeviceDescription DeviceGraphImplementation::device(IndexType deviceId) {
     auto device = deviceTable.at(deviceId);
     return describeDevice(device);
 }
-
 
 DeviceGraph::DeviceDescription DeviceGraphImplementation::describeDevice(DeviceWrapper &device) {
     DeviceDescription description;
     description.name = device.name;
     description.deviceId = device.deviceId;
+    description.device = device.device;
     return description;
 }
 

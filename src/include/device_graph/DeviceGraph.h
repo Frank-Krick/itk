@@ -24,6 +24,7 @@ public:
     struct DeviceDescription {
         std::string name;
         IndexType deviceId = 0;
+        Device::Ptr device;
     };
 
     struct AudioConnection {
@@ -44,10 +45,6 @@ public:
     typedef std::vector<ControlConnection> ControlConnections;
 
     virtual ~DeviceGraph() {};
-
-    virtual IndexType addDevice(Device::Ptr device) = 0;
-    virtual void removeDevice(int deviceId) = 0;
-
     /*
      * Methods to manage connections between the devices.
      */
@@ -58,13 +55,16 @@ public:
     virtual bool isConnected(IndexType sourceId, IndexType targetTd, IndexType parameterId) = 0;
     virtual AudioConnections audioConnections() = 0;
     virtual ControlConnections controlConnections() = 0;
-
     /*
      * Methods to handle devices in the device graph
      */
-    virtual DeviceDescription describeDevice(IndexType deviceId) = 0;
+    virtual DeviceDescription device(IndexType deviceId) = 0;
     virtual DeviceDescriptions devices() = 0;
-
+    virtual IndexType addDevice(Device::Ptr device) = 0;
+    virtual void removeDevice(IndexType deviceId) = 0;
+    /*
+     * Managing instances of the device graph
+     */
     virtual DeviceGraphInstance::Ptr createInstance() = 0;
     virtual bool isInstanceUpToDate(DeviceGraphInstance &instance) = 0;
 };
