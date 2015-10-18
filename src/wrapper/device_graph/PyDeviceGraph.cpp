@@ -1,9 +1,17 @@
 #include "PyDeviceGraph.h"
 
+#include <algorithm>
+#include <iterator>
+
 namespace itk { namespace wrapper {
 
 IndexType PyDeviceGraph::addDevice(PyDevice device) {
     return _deviceGraph->addDevice(device.device());
+}
+
+PyDeviceGraph::DeviceDescription PyDeviceGraph::device(IndexType deviceId) {
+    auto device = _deviceGraph->device(deviceId);
+    return PyDeviceGraph::DeviceDescription(device);
 }
 
 void PyDeviceGraph::connect(IndexType sourceId, IndexType targetId) {
@@ -32,9 +40,18 @@ boost::python::list to_python_list(T container) {
 }
 
 boost::python::list PyDeviceGraph::devices() {
-    return to_python_list(_deviceGraph->devices());
-}
+    using std::transform;
+    using std::begin;
+    using std::end;
+    using std::back_inserter;
+    using std::vector;
 
+    vector<PyDeviceGraph::DeviceDescription> converted;
+    auto devices = _deviceGraph->devices();
+    transform(begin(devices), end(devices), back_inserter(converted),
+        [](DeviceGraph::DeviceDescription description) { return PyDeviceGraph::DeviceDescription(description); });
+    return to_python_list(converted);
+}
 
 boost::python::list PyDeviceGraph::audioConnections() {
     return to_python_list(_deviceGraph->audioConnections());

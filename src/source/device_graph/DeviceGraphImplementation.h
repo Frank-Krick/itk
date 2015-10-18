@@ -25,9 +25,6 @@ class DeviceGraphImplementation : DeviceGraph {
 public:
     virtual ~DeviceGraphImplementation();
 
-    virtual IndexType addDevice(Device::Ptr device) override;
-    virtual void removeDevice(int deviceId) override;
-
     virtual void connect(IndexType sourceId, IndexType targetId) override;
     virtual void connect(IndexType sourceId, IndexType targetId, IndexType parameterId) override;
     virtual void disconnect(IndexType sourceId, IndexType targetId) override;
@@ -39,11 +36,12 @@ public:
     virtual DeviceGraphInstance::Ptr createInstance() override;
     virtual bool isInstanceUpToDate(DeviceGraphInstance &instance) override;
 
-    virtual DeviceDescription describeDevice(IndexType deviceId) override;
-
+    virtual DeviceDescription device(IndexType deviceId) override;
     virtual DeviceDescriptions devices() override;
+    virtual IndexType addDevice(Device::Ptr device) override;
+    virtual void removeDevice(IndexType deviceId) override;
 
-/*
+    /*
      * Definition of the BGL graph type. We are using an adjacency list. The out edges
      * are stored in a std::vector, the vertices in a std::list. This configuration
      * doesn't invalidate the vertex_descriptors. We make use of that to provide an

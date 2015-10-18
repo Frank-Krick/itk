@@ -13,10 +13,21 @@ namespace itk { namespace wrapper {
 
 class PyDeviceGraph {
 public:
+    struct DeviceDescription {
+        DeviceDescription(const DeviceGraph::DeviceDescription device)
+                : name(device.name), deviceId(device.deviceId), device(device.device) {}
+
+        std::string name;
+        IndexType deviceId = 0;
+        PyDevice device;
+    };
+
     PyDeviceGraph()
             : _deviceGraph(DeviceGraphFactory::createDeviceGraph()) {}
 
     IndexType addDevice(PyDevice device);
+    PyDeviceGraph::DeviceDescription device(IndexType deviceId);
+
     void connect(IndexType sourceId, IndexType targetId);
     void connect(IndexType sourceId, IndexType targetId, IndexType parameterId);
     bool isConnected(IndexType sourceId, IndexType targetId);
