@@ -12,6 +12,8 @@
 #include "device/PyDevice.h"
 #include "device_graph/PyDeviceGraph.h"
 
+#include <Typedef.h>
+
 namespace boost {
     template<class T>
     T* get_pointer(std::shared_ptr<T> p) { return p.get(); }
@@ -32,6 +34,7 @@ BOOST_PYTHON_MODULE(itk)
     using itk::ParameterDescription;
     using itk::wrapper::PyDevice;
     using itk::wrapper::PyDeviceGraph;
+    using itk::DataBuffer;
 
     class_<ParameterDescription>("ParameterDescription", no_init)
             .def_readonly("name", &ParameterDescription::name)
@@ -95,6 +98,9 @@ BOOST_PYTHON_MODULE(itk)
             .add_property("devices", &PyDeviceGraph::devices)
             .add_property("controlConnections", &PyDeviceGraph::controlConnections)
             .add_property("audioConnections", &PyDeviceGraph::audioConnections);
+
+    class_<DataBuffer>("DataBuffer")
+            .def(vector_indexing_suite<DataBuffer>());
 }
 
 #endif //INSTRUMENT_TOOL_KIT_ITK_H
