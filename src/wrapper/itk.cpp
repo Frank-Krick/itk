@@ -74,6 +74,15 @@ BOOST_PYTHON_MODULE(itk)
             typename itk::IndexType,
             typename itk::IndexType) = &PyDeviceGraph::isConnected;
 
+    itk::DataType (PyDeviceGraph::*getParameterValue)(
+            typename itk::IndexType,
+            typename itk::IndexType) = &PyDeviceGraph::parameterValue;
+
+    void (PyDeviceGraph::*setParameterValue)(
+            typename itk::IndexType,
+            typename itk::IndexType,
+            typename itk::DataType) = &PyDeviceGraph::parameterValue;
+
     class_<PyDeviceGraph::DeviceDescription>("DeviceDescription", no_init)
             .def_readonly("name", &PyDeviceGraph::DeviceDescription::name)
             .def_readonly("deviceId", &PyDeviceGraph::DeviceDescription::deviceId)
@@ -95,6 +104,8 @@ BOOST_PYTHON_MODULE(itk)
             .def("connect", connect_control)
             .def("is_connected", isConnected_audio)
             .def("is_connected", isConnected_control)
+            .def("parameter_value", getParameterValue)
+            .def("parameter_value", setParameterValue)
             .add_property("devices", &PyDeviceGraph::devices)
             .add_property("controlConnections", &PyDeviceGraph::controlConnections)
             .add_property("audioConnections", &PyDeviceGraph::audioConnections);

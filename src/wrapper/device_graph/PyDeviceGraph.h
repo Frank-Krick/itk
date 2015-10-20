@@ -33,6 +33,9 @@ public:
     bool isConnected(IndexType sourceId, IndexType targetId);
     bool isConnected(IndexType sourceId, IndexType targetTd, IndexType parameterId);
 
+    DataType parameterValue(IndexType deviceId, IndexType parameterId);
+    void parameterValue(IndexType deviceId, IndexType parameterId, DataType value);
+
     boost::python::list devices();
     boost::python::list audioConnections();
     boost::python::list controlConnections();

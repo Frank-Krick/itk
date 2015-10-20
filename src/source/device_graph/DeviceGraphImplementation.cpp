@@ -179,4 +179,12 @@ DeviceGraph::ControlConnections DeviceGraphImplementation::controlConnections() 
     return result;
 }
 
+DataType DeviceGraphImplementation::parameterValue(IndexType deviceId, IndexType parameterId) {
+    return parameterTable->parameterValue(deviceId, parameterId);
+}
+
+void DeviceGraphImplementation::parameterValue(IndexType deviceId, IndexType parameterId, DataType value) {
+    parameterTable->parameterValue(deviceId, parameterId, value);
+}
+
 } // namespace itk

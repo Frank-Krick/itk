@@ -63,6 +63,11 @@ public:
     virtual IndexType addDevice(Device::Ptr device) = 0;
     virtual void removeDevice(IndexType deviceId) = 0;
     /*
+     * Methods to handle device parameter
+    */
+    virtual DataType parameterValue(IndexType deviceId, IndexType parameterId) = 0;
+    virtual void parameterValue(IndexType deviceId, IndexType parameterId, DataType value) = 0;
+    /*
      * Managing instances of the device graph
      */
     virtual DeviceGraphInstance::Ptr createInstance() = 0;

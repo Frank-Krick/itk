@@ -19,8 +19,8 @@ namespace itk {
         virtual void unregisterDeviceParameters(IndexType deviceId) override;
 
         virtual bool hasParameter(IndexType deviceId, IndexType parameterId) override;
-        virtual DataType getParameterValue(IndexType deviceId, IndexType parameterId) override;
-        virtual void setParameterValue(IndexType deviceId, IndexType parameterId, DataType value) override;
+        virtual DataType parameterValue(IndexType deviceId, IndexType parameterId) override;
+        virtual void parameterValue(IndexType deviceId, IndexType parameterId, DataType value) override;
 
     private:
         typedef std::list<ParameterDescription> ParameterList;

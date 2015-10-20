@@ -15,9 +15,9 @@ BOOST_AUTO_TEST_SUITE( ParameterTableTests )
         IndexType deviceId = 3;
         parameterTable.registerDeviceParameters(deviceId, *device);
         IndexType parameterId = 2;
-        parameterTable.setParameterValue(deviceId, parameterId, 4.0);
+    parameterTable.parameterValue(deviceId, parameterId, 4.0);
         BOOST_CHECK(parameterTable.hasParameter(deviceId, parameterId));
-        BOOST_CHECK(parameterTable.getParameterValue(deviceId, parameterId) == 4.0);
+        BOOST_CHECK(parameterTable.parameterValue(deviceId, parameterId) == 4.0);
     }
 
 BOOST_AUTO_TEST_SUITE_END()
