@@ -84,7 +84,7 @@ namespace itk {
             auto parameters = parameterList.second;
             for (auto parameter : parameters) {
                 auto parameterId = parameter.first;
-                auto value = parameterTable.getParameterValue(deviceId, parameterId);
+                auto value = parameterTable.parameterValue(deviceId, parameterId);
                 fill(begin(parameter.second->buffer), end(parameter.second->buffer), value);
             }
         }

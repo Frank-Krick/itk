@@ -19,8 +19,8 @@ namespace itk {
         virtual void unregisterDeviceParameters(IndexType deviceId) = 0;
 
         virtual bool hasParameter(IndexType deviceId, IndexType parameterId) = 0;
-        virtual DataType getParameterValue(IndexType deviceId, IndexType parameterId) = 0;
-        virtual void setParameterValue(IndexType deviceId, IndexType parameterId, DataType value) = 0;
+        virtual DataType parameterValue(IndexType deviceId, IndexType parameterId) = 0;
+        virtual void parameterValue(IndexType deviceId, IndexType parameterId, DataType value) = 0;
     };
 
 }

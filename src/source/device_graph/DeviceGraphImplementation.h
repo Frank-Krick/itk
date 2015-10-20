@@ -41,6 +41,9 @@ public:
     virtual IndexType addDevice(Device::Ptr device) override;
     virtual void removeDevice(IndexType deviceId) override;
 
+    virtual DataType parameterValue(IndexType deviceId, IndexType parameterId) override;
+    virtual void parameterValue(IndexType deviceId, IndexType parameterId, DataType value) override;
+
     /*
      * Definition of the BGL graph type. We are using an adjacency list. The out edges
      * are stored in a std::vector, the vertices in a std::list. This configuration

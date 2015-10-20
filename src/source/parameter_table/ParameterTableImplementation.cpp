@@ -33,11 +33,11 @@ namespace itk {
         return false;
     }
 
-    DataType ParameterTableImplementation::getParameterValue(IndexType deviceId, IndexType parameterId) {
+    DataType ParameterTableImplementation::parameterValue(IndexType deviceId, IndexType parameterId) {
         return valueMap.at(deviceId).at(parameterId);
     }
 
-    void ParameterTableImplementation::setParameterValue(IndexType deviceId, IndexType parameterId, DataType value) {
+    void ParameterTableImplementation::parameterValue(IndexType deviceId, IndexType parameterId, DataType value) {
         valueMap[deviceId][parameterId] = value;
     }
 

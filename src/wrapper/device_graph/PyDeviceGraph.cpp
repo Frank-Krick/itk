@@ -61,4 +61,13 @@ boost::python::list PyDeviceGraph::controlConnections() {
     return to_python_list(_deviceGraph->controlConnections());
 }
 
+
+DataType PyDeviceGraph::parameterValue(IndexType deviceId, IndexType parameterId) {
+    return _deviceGraph->parameterValue(deviceId, parameterId);
+}
+
+void PyDeviceGraph::parameterValue(IndexType deviceId, IndexType parameterId, DataType value) {
+    _deviceGraph->parameterValue(deviceId, parameterId, value);
+}
+
 }}
