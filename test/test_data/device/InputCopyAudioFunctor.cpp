@@ -23,7 +23,7 @@ ParameterList InputCopyAudioFunctor::parameterList() {
 }
 
 std::shared_ptr<AudioFunctor> InputCopyAudioFunctor::clone() {
-    auto functor = new InputCopyAudioFunctor(_deviceId, sampleRate);
+    auto functor = new InputCopyAudioFunctor(_deviceId, _sampleRate);
     return std::shared_ptr<AudioFunctor>((AudioFunctor *)functor);
 }
 
@@ -33,6 +33,6 @@ InputCopyAudioFunctor::InputCopyAudioFunctor(IndexType deviceId, unsigned int sa
         : AudioFunctor(deviceId, sampleRate) {}
 
 Functor::Ptr InputCopyAudioFunctor::clone(IndexType deviceId) {
-    auto functor = new InputCopyAudioFunctor(deviceId, sampleRate);
+    auto functor = new InputCopyAudioFunctor(deviceId, _sampleRate);
     return std::shared_ptr<Functor>((Functor *)functor);
 }

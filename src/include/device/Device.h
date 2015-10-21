@@ -28,10 +28,10 @@ public:
     virtual Functor::Ptr functor(IndexType deviceId) = 0;
 
     std::string name() { return _name; }
-    std::string description() { return _description; };
-    DeviceType deviceType() { return _deviceType; };
+    std::string description() { return _description; }
+    DeviceType deviceType() { return _deviceType; }
 
-    virtual ~Device() {};
+    virtual ~Device();
 
 protected:
     std::string _name = "";

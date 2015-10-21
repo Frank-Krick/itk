@@ -8,32 +8,25 @@
 
 namespace itk {
 
-    using namespace std;
+using namespace std;
 
-    DeviceTypeMismatch::DeviceTypeMismatch(
-            DeviceType sourceType,
-            DeviceType targetType,
-            ConnectionType connectionType) {
+DeviceType DeviceTypeMismatch::sourceType() {
+    return _sourceType;
+}
 
-    }
+DeviceType DeviceTypeMismatch::targetType() {
+    return _targetType;
+}
 
-    DeviceType DeviceTypeMismatch::getSourceType() {
-        return sourceType;
-    }
+ConnectionType DeviceTypeMismatch::connectionType() {
+    return _connectionType;
+}
 
-    DeviceType DeviceTypeMismatch::getTargetType() {
-        return targetType;
-    }
-
-    ConnectionType DeviceTypeMismatch::getConnectionType() {
-        return connectionType;
-    }
-
-    const char *DeviceTypeMismatch::what() const noexcept {
-        stringstream stream;
-        stream << "Cannot connect the source device of type " << sourceType << " to the target device of " <<
-        targetType << " using a connection of type " << connectionType;
-        return stream.str().c_str();
-    }
+const char *DeviceTypeMismatch::what() const noexcept {
+    stringstream stream;
+    stream << "Cannot connect the source device of type " << _sourceType << " to the target device of "
+        << _targetType << " using a connection of type " << _connectionType;
+    return stream.str().c_str();
+}
 
 }

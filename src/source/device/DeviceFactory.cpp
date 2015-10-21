@@ -24,7 +24,7 @@ template<class Iter>
 Device::Ptr DeviceFactory::createDevice(std::string name, std::string description, DeviceType type,
                                         Iter deviceParameterBegin, Iter deviceParameterEnd) {
 
-    auto device = new DeviceImplementation();
+    auto device = std::make_shared<DeviceImplementation>();
     device->deviceType(type);
     device->name(name);
     device->description(description);
@@ -33,7 +33,7 @@ Device::Ptr DeviceFactory::createDevice(std::string name, std::string descriptio
         device->addParameter(*it);
     }
 
-    return Device::Ptr((Device *) device);
+    return device;
 }
 
 }

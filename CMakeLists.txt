@@ -4,9 +4,12 @@ project(instrument_tool_kit)
 set(itk_VERSION_MAJOR 0)
 set(itk_VERSION_MINOR 1)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y")
+set(CLANG_CXX_FLAGS "-std=c++1y -Weverything -Wno-c++98-compat -Wno-padded -Wno-shadow -Wno-unused-macros -Wno-missing-prototypes -Wno-unused-parameter -Wno-c++98-compat-pedantic -Wno-missing-prototypes")
 
-set(PYTHON_LIBRARY /usr/local/Cellar/python/2.7.9/Frameworks/Python.framework/Versions/2.7/lib/libpython2.7.dylib)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CLANG_CXX_FLAGS}")
+
+set(PYTHON_LIBRARY
+        /usr/local/Cellar/python/2.7.9/Frameworks/Python.framework/Versions/2.7/lib/libpython2.7.dylib)
 
 find_package(Boost 1.58.0)
 if(Boost_FOUND)
@@ -64,14 +67,19 @@ set(SOURCE_FILES
         src/include/processing/generator/ControlFunctor.cpp
         src/include/processing/generator/ControlFunctor.h
         src/source/device/DeviceRegistry.cpp
-        src/include/device/DeviceRegistry.h)
+        src/include/device/DeviceRegistry.h
+        src/source/processing/generator/Functor.cpp
+        src/source/parameter_table/ParameterTable.cpp
+        src/source/processing/instance/Instance.cpp)
 
 set(PYTHON_WRAPPER
         src/wrapper/itk.cpp
         src/wrapper/device/PyDeviceRegistry.cpp
         src/wrapper/device/PyDeviceRegistry.h
         src/wrapper/device_graph/PyDeviceGraph.cpp
-        src/wrapper/device_graph/PyDeviceGraph.h src/wrapper/device/PyDevice.cpp src/wrapper/device/PyDevice.h)
+        src/wrapper/device_graph/PyDeviceGraph.h
+        src/wrapper/device/PyDevice.cpp
+        src/wrapper/device/PyDevice.h)
 
 set(TEST_FILES
         test/device_graph/DeviceGraphTests.cpp

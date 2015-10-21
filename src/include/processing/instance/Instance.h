@@ -20,6 +20,8 @@ namespace itk {
         typedef std::shared_ptr<Instance> Ptr;
 
         virtual void operator () (OutputChannels beginOut, OutputChannels endOut) = 0;
+
+        virtual ~Instance();
     };
 
 }

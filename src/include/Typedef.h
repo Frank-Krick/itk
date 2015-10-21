@@ -8,7 +8,7 @@ namespace itk {
 
     class ParameterDescription;
 
-    typedef unsigned int IndexType;
+    typedef unsigned long IndexType;
     typedef double DataType;
     typedef std::vector<DataType> DataBuffer;
     typedef std::list<ParameterDescription> ParameterList;

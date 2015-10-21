@@ -2,6 +2,9 @@
 
 namespace itk {
 
+
+DeviceGraph::~DeviceGraph() {}
+
 std::ostream & operator << (std::ostream & stream, const ConnectionType & type) {
     switch (type) {
         case ConnectionType::AUDIO:

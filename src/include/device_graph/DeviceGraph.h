@@ -43,8 +43,6 @@ public:
     typedef std::vector<DeviceDescription> DeviceDescriptions;
     typedef std::vector<AudioConnection> AudioConnections;
     typedef std::vector<ControlConnection> ControlConnections;
-
-    virtual ~DeviceGraph() {};
     /*
      * Methods to manage connections between the devices.
      */
@@ -72,6 +70,8 @@ public:
      */
     virtual DeviceGraphInstance::Ptr createInstance() = 0;
     virtual bool isInstanceUpToDate(DeviceGraphInstance &instance) = 0;
+
+    virtual ~DeviceGraph();
 };
 
 }

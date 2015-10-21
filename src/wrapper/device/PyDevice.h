@@ -11,12 +11,12 @@ class PyDevice {
 public:
     PyDevice(const Device::Ptr &device) : _device(device) {}
 
-    std::string name() { return _device->name(); };
-    std::string description() { return _device->description(); };
-    DeviceType deviceType() { return _device->deviceType(); };
+    std::string name() { return _device->name(); }
+    std::string description() { return _device->description(); }
+    DeviceType deviceType() { return _device->deviceType(); }
     boost::python::list availableParameters();
 
-    Device::Ptr device() { return _device; };
+    Device::Ptr device() { return _device; }
 
 private:
     const Device::Ptr _device;
