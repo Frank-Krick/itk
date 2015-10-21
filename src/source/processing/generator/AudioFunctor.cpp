@@ -6,8 +6,8 @@
 
 namespace itk {
 
-    bool AudioFunctor::operator != (const AudioFunctor &generator) {
-        return ! this->operator==(generator);
-    }
+bool AudioFunctor::operator != (const AudioFunctor &generator) {
+    return ! this->operator==(generator);
+}
 
 }

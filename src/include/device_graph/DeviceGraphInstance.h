@@ -13,7 +13,7 @@ namespace itk {
     public:
         typedef std::shared_ptr<DeviceGraphInstance> Ptr;
 
-        ~DeviceGraphInstance() { };
+        ~DeviceGraphInstance() {}
     };
 
 }

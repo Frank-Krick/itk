@@ -116,7 +116,7 @@ std::string DeviceWrapper::defaultName(IndexType deviceId) {
     return stream.str();
 }
 
-DeviceGraphImplementation::Vertex DeviceGraphImplementation::vertexFromDeviceId(int deviceId) {
+DeviceGraphImplementation::Vertex DeviceGraphImplementation::vertexFromDeviceId(IndexType deviceId) {
     return deviceIdVertexMap.at(deviceId);
 }
 
@@ -185,6 +185,35 @@ DataType DeviceGraphImplementation::parameterValue(IndexType deviceId, IndexType
 
 void DeviceGraphImplementation::parameterValue(IndexType deviceId, IndexType parameterId, DataType value) {
     parameterTable->parameterValue(deviceId, parameterId, value);
+}
+
+DeviceWrapper::DeviceWrapper() {
+    vertex = 0;
+    device = Device::Ptr();
+    deviceId = 0;
+    name = defaultName(0);
+}
+
+DeviceWrapper::DeviceWrapper(Vertex vertex, Device::Ptr device) {
+    this->vertex = vertex;
+    this->device = device;
+    this->deviceId = nextDeviceId++;
+    this->name = defaultName(this->deviceId);
+}
+
+DeviceWrapper::DeviceWrapper(const DeviceWrapper &dw) {
+    this->vertex = dw.vertex;
+    this->device = dw.device;
+    this->deviceId = dw.deviceId;
+    this->name = dw.name;
+}
+
+DeviceWrapper &DeviceWrapper::operator=(DeviceWrapper wrapper) {
+    std::swap(vertex, wrapper.vertex);
+    std::swap(device, wrapper.device);
+    std::swap(deviceId, wrapper.deviceId);
+    std::swap(name, wrapper.name);
+    return *this;
 }
 
 } // namespace itk

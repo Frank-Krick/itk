@@ -1,7 +1,3 @@
-//
-// Created by Frank Krick on 9/13/15.
-//
-
 #ifndef INSTRUMENT_TOOL_KIT_CONTROLFUNCTOR_H
 #define INSTRUMENT_TOOL_KIT_CONTROLFUNCTOR_H
 
@@ -12,24 +8,23 @@
 
 namespace itk {
 
-    class ControlFunctor : public Functor {
-    public:
-        typedef std::unordered_map<IndexType, ParameterMap> ParameterDeviceMap;
-        typedef std::shared_ptr<ControlFunctor> Ptr;
+class ControlFunctor : public Functor {
+public:
+    typedef std::unordered_map<IndexType, ParameterMap> ParameterDeviceMap;
+    typedef std::shared_ptr<ControlFunctor> Ptr;
 
-        virtual void operator () (
-                DataBuffer::iterator outputBegin, DataBuffer::iterator outputEnd,
-                ParameterDeviceMap & parameter) = 0;
+    virtual void operator () (
+            DataBuffer::iterator outputBegin, DataBuffer::iterator outputEnd,
+            ParameterDeviceMap & parameter) = 0;
 
-        virtual std::list<ParameterDescription> parameterList();
+    virtual std::list<ParameterDescription> parameterList();
 
-        ControlFunctor(IndexType deviceId, unsigned int sampleRate)
-                : Functor(deviceId),
-                  sampleRate(sampleRate) {};
+    ControlFunctor(IndexType deviceId, unsigned int sampleRate)
+            : Functor(deviceId), _sampleRate(sampleRate) {}
 
-    protected:
-        unsigned int sampleRate;
-    };
+protected:
+    unsigned int _sampleRate;
+};
 
 }
 

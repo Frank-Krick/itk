@@ -21,7 +21,7 @@ struct EdgeData {
 
 class DeviceWrapper;
 
-class DeviceGraphImplementation : DeviceGraph {
+class DeviceGraphImplementation : public DeviceGraph {
 public:
     virtual ~DeviceGraphImplementation();
 
@@ -65,9 +65,9 @@ private:
     DeviceTable deviceTable;
     DeviceIdVertexMap deviceIdVertexMap;
     Graph graph;
-    ParameterTable::Ptr parameterTable = ParameterTable::Ptr((ParameterTable *) new ParameterTableImplementation());
+    ParameterTable::Ptr parameterTable = std::make_shared<ParameterTableImplementation>();
 
-    Vertex vertexFromDeviceId(int deviceId);
+    Vertex vertexFromDeviceId(IndexType deviceId);
     DeviceDescription describeDevice(DeviceWrapper& device);
 };
 
@@ -80,26 +80,11 @@ public:
     IndexType deviceId = 0;
     std::string name;
 
-    DeviceWrapper() {
-        vertex = 0;
-        device = Device::Ptr();
-        deviceId = 0;
-        name = defaultName(0);
-    }
+    DeviceWrapper();
+    DeviceWrapper(Vertex vertex, Device::Ptr device);
+    DeviceWrapper(const DeviceWrapper &dw);
 
-    DeviceWrapper(Vertex vertex, Device::Ptr device) {
-        this->vertex = vertex;
-        this->device = device;
-        this->deviceId = nextDeviceId++;
-        this->name = defaultName(this->deviceId);
-    }
-
-    DeviceWrapper(const DeviceWrapper &dw) {
-        this->vertex = dw.vertex;
-        this->device = dw.device;
-        this->deviceId = dw.deviceId;
-        this->name = dw.name;
-    }
+    DeviceWrapper &operator=(DeviceWrapper wrapper);
 
 private:
     static IndexType nextDeviceId;
@@ -108,6 +93,5 @@ private:
 };
 
 } // namespace itk
-
 
 #endif //INSTRUMENT_TOOL_KIT_DEVICEGRAPHIMPLEMENTATION_H

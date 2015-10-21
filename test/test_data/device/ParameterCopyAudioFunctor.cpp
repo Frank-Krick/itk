@@ -28,7 +28,7 @@ void ParameterCopyAudioFunctor::operator()(InputChannels beginIn, InputChannels 
 bool ParameterCopyAudioFunctor::operator==(const AudioFunctor &functor) {
     if (typeid(functor) == typeid(*this)) {
         auto f = (ParameterCopyAudioFunctor &) functor;
-        return sampleRate == f.sampleRate &&
+        return _sampleRate == f._sampleRate &&
                numParameters == f.numParameters &&
                sourceParameterId == f.sourceParameterId;
     } else {
@@ -46,7 +46,7 @@ ParameterList ParameterCopyAudioFunctor::parameterList() {
 }
 
 AudioFunctor::Ptr ParameterCopyAudioFunctor::clone() {
-    auto clone = new ParameterCopyAudioFunctor(0, numParameters, sourceParameterId, sampleRate);
+    auto clone = new ParameterCopyAudioFunctor(0, numParameters, sourceParameterId, _sampleRate);
     return AudioFunctor::Ptr((AudioFunctor *)clone);
 }
 
@@ -63,6 +63,6 @@ ParameterCopyAudioFunctor::ParameterCopyAudioFunctor(
 }
 
 Functor::Ptr ParameterCopyAudioFunctor::clone(IndexType deviceId) {
-    auto clone = new ParameterCopyAudioFunctor(deviceId, numParameters, sourceParameterId, sampleRate);
+    auto clone = new ParameterCopyAudioFunctor(deviceId, numParameters, sourceParameterId, _sampleRate);
     return AudioFunctor::Ptr((AudioFunctor *)clone);
 }

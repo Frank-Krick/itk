@@ -107,7 +107,7 @@ namespace itk {
                 }
             }
             return unique_ptr<ControlFunctor::ParameterDeviceMap>(inputParameterMap);
-        };
+        }
 
         void distributeParametersAlongEdges(IndexType vertexId);
         std::vector<IndexType> findChildren(ControlEdgeList edgeList);
