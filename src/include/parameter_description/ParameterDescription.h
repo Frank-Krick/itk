@@ -14,8 +14,8 @@ public:
             IndexType id,
             const std::string &name,
             const std::string &description,
-            DataType max,
-            DataType min)
+            DataType min,
+            DataType max)
             : _id(id), _name(name), _description(description), _max(max), _min(min) {}
 
     IndexType id() const { return _id; }
