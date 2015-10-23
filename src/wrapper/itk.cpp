@@ -47,10 +47,10 @@ BOOST_PYTHON_MODULE(itk)
             .add_property("name", &PyDevice::name)
             .add_property("description", &PyDevice::description)
             .add_property("deviceType", &PyDevice::deviceType)
-            .add_property("available_parameters", &PyDevice::availableParameters);
+            .add_property("availableParameters", &PyDevice::availableParameters);
 
     class_<PyDeviceRegistry>("DeviceRegistry")
-            .def("registeredDevices", &PyDeviceRegistry::registeredDevices);
+            .def_readonly("registeredDevices", &PyDeviceRegistry::registeredDevices);
 
     enum_<DeviceType>("DeviceType")
             .value("Audio", DeviceType::AUDIO)
