@@ -13,6 +13,7 @@ void ParameterTableImplementation::registerDeviceParameters(IndexType deviceId, 
     auto deviceParameters = parameterTable[deviceId];
     for (tie(di, di_end) = device.availableParameters(); di != di_end; ++di) {
         deviceParameters.push_back(*di);
+        valueMap[deviceId][di->id()] = di->min();
     }
     parameterTable[deviceId] = deviceParameters;
 }
