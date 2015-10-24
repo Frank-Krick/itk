@@ -1,12 +1,15 @@
 #ifndef INSTRUMENT_TOOL_KIT_DEVICEGRAPHIMPLEMENTATION_H
 #define INSTRUMENT_TOOL_KIT_DEVICEGRAPHIMPLEMENTATION_H
 
+#include <device_graph/DeviceGraph.h>
+#include <parameter_table/ParameterTable.h>
+
+#include "../parameter_table/ParameterTableImplementation.h"
+#include "instance_builder/InstanceBuilder.h"
+
 #include <unordered_map>
 #include <boost/graph/adjacency_list.hpp>
 
-#include <device_graph/DeviceGraph.h>
-#include <parameter_table/ParameterTable.h>
-#include "../parameter_table/ParameterTableImplementation.h"
 
 namespace itk {
 
@@ -23,8 +26,6 @@ class DeviceWrapper;
 
 class DeviceGraphImplementation : public DeviceGraph {
 public:
-    virtual ~DeviceGraphImplementation();
-
     virtual void connect(IndexType sourceId, IndexType targetId) override;
     virtual void connect(IndexType sourceId, IndexType targetId, IndexType parameterId) override;
     virtual void disconnect(IndexType sourceId, IndexType targetId) override;
@@ -33,8 +34,8 @@ public:
     virtual AudioConnections audioConnections();
     virtual ControlConnections controlConnections();
 
-    virtual DeviceGraphInstance::Ptr createInstance() override;
-    virtual bool isInstanceUpToDate(DeviceGraphInstance &instance) override;
+    virtual Instance::Ptr createInstance(unsigned int bufferSize) override;
+    virtual bool isInstanceUpToDate(Instance &instance) override;
 
     virtual DeviceDescription device(IndexType deviceId) override;
     virtual DeviceDescriptions devices() override;
@@ -56,16 +57,21 @@ public:
             boost::bidirectionalS,
             VertexData, EdgeData> Graph;
 
+
+    DeviceGraphImplementation();
+    virtual ~DeviceGraphImplementation();
+
 private:
     typedef Graph::vertex_descriptor Vertex;
     typedef Graph::edge_descriptor Edge;
     typedef std::unordered_map<IndexType, DeviceWrapper> DeviceTable;
     typedef std::unordered_map<IndexType, Graph::vertex_descriptor> DeviceIdVertexMap;
 
-    DeviceTable deviceTable;
-    DeviceIdVertexMap deviceIdVertexMap;
-    Graph graph;
-    ParameterTable::Ptr parameterTable = std::make_shared<ParameterTableImplementation>();
+    DeviceTable _deviceTable;
+    DeviceIdVertexMap _deviceIdVertexMap;
+    Graph _graph;
+    ParameterTable::Ptr _parameterTable = std::make_shared<ParameterTableImplementation>();
+    InstanceBuilder<Graph> _instanceBuilder;
 
     Vertex vertexFromDeviceId(IndexType deviceId);
     DeviceDescription describeDevice(DeviceWrapper& device);

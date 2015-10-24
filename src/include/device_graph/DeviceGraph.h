@@ -8,7 +8,7 @@
 #include <Typedef.h>
 #include <device/Device.h>
 #include <parameter_table/ParameterTable.h>
-#include "DeviceGraphInstance.h"
+#include <processing/instance/Instance.h>
 
 #include <memory>
 #include <string>
@@ -68,8 +68,8 @@ public:
     /*
      * Managing instances of the device graph
      */
-    virtual DeviceGraphInstance::Ptr createInstance() = 0;
-    virtual bool isInstanceUpToDate(DeviceGraphInstance &instance) = 0;
+    virtual Instance::Ptr createInstance(unsigned int bufferSize) = 0;
+    virtual bool isInstanceUpToDate(Instance &instance) = 0;
 
     virtual ~DeviceGraph();
 };

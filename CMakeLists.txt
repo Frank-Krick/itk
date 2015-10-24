@@ -70,7 +70,8 @@ set(SOURCE_FILES
         src/include/device/DeviceRegistry.h
         src/source/processing/generator/Functor.cpp
         src/source/parameter_table/ParameterTable.cpp
-        src/source/processing/instance/Instance.cpp)
+        src/source/processing/instance/Instance.cpp
+        src/source/device_graph/instance_builder/InstanceBuilder.h)
 
 set(PYTHON_WRAPPER
         src/wrapper/itk.cpp
@@ -101,9 +102,9 @@ set(TEST_FILES
         test/test_data/device/TestFunctors.h
         test/test_data/device/TestFunctorLists.cpp
         test/test_data/device/TestFunctorLists.h
-        test/instance/InstanceImplementationTests.cpp
         test/test_data/device/InputCopyAudioFunctor.cpp
-        test/test_data/device/InputCopyAudioFunctor.h)
+        test/test_data/device/InputCopyAudioFunctor.h
+        test/device_graph/instance_builder/InstanceBuilderTests.cpp)
 
 add_executable(instrument_tool_kit src/source/main.cpp ${SOURCE_FILES})
 

@@ -12,15 +12,22 @@ void InstanceImplementation::operator () (OutputChannels beginOut, OutputChannel
     using std::cbegin;
     using std::cend;
     using std::copy;
-    initializeParameterMap();
-    calculateControlParameter();
-    calculateAudioOutput();
-    auto left = cbegin(audioFunctorTable[_audioOutput]->left);
-    auto right = cbegin(audioFunctorTable[_audioOutput]->right);
-    auto left_end = cend(audioFunctorTable[_audioOutput]->left);
-    auto right_end = cend(audioFunctorTable[_audioOutput]->right);
-    copy(left, left_end, beginOut[0]);
-    copy(right, right_end, beginOut[1]);
+    using std::fill;
+
+    if (isOutputFunctorValid()) {
+        initializeParameterMap();
+        calculateControlParameter();
+        calculateAudioOutput();
+        auto left = cbegin(audioFunctorTable[_audioOutput]->left);
+        auto right = cbegin(audioFunctorTable[_audioOutput]->right);
+        auto left_end = cend(audioFunctorTable[_audioOutput]->left);
+        auto right_end = cend(audioFunctorTable[_audioOutput]->right);
+        copy(left, left_end, beginOut[0]);
+        copy(right, right_end, beginOut[1]);
+    } else {
+        fill(beginOut[0], endOut[0], 0.0);
+        fill(beginOut[1], endOut[1], 0.0);
+    }
 }
 
 void InstanceImplementation::calculateAudioOutput() {
@@ -28,6 +35,7 @@ void InstanceImplementation::calculateAudioOutput() {
     using std::cbegin;
     using std::end;
     using std::cend;
+
     auto nodes = findAudioDeviceLeafs();
     while (nodes.size() > 0) {
         for (auto node : nodes) {
@@ -61,7 +69,6 @@ void InstanceImplementation::calculateAudioOutput() {
         nodes = findAudioDeviceChildren(begin(nodes), end(nodes));
     }
 }
-
 
 std::vector<IndexType> InstanceImplementation::findAudioDevicePredecessors(IndexType vertexId) {
     std::vector<IndexType> result;
@@ -234,7 +241,7 @@ void InstanceImplementation::bufferSize(unsigned int bufferSize) {
 IndexType InstanceImplementation::addAudioFunctorList(AudioFunctorList::Ptr functorList) {
     using namespace std;
 
-    auto functorWrapper = AudioFunctorWrapper(new FunctorWrapper<AudioFunctorList>());
+    auto functorWrapper = make_shared<FunctorWrapper<AudioFunctorList>>();
     functorWrapper->functor = functorList;
     functorWrapper->index = audioFunctorTable.size();
     audioFunctorTable.push_back(functorWrapper);
