@@ -53,6 +53,8 @@ public:
     virtual bool isConnected(IndexType sourceId, IndexType targetTd, IndexType parameterId) = 0;
     virtual AudioConnections audioConnections() = 0;
     virtual ControlConnections controlConnections() = 0;
+    virtual void outputDeviceId(IndexType deviceId) = 0;
+    virtual IndexType outputDeviceId() = 0;
     /*
      * Methods to handle devices in the device graph
      */

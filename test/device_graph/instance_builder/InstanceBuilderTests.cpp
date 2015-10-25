@@ -3,7 +3,7 @@
 #include <device_graph/DeviceGraphFactory.h>
 #include <Typedef.h>
 #include "../../test_data/device/TestDevices.h"
-
+#include "../../../src/source/device_graph/DeviceGraphImplementation.h"
 
 BOOST_AUTO_TEST_SUITE( InstanceBuilderTests )
 
@@ -47,6 +47,53 @@ BOOST_AUTO_TEST_CASE( instance_builder_with_one_device ) {
     (*instance)(beginIt, endIt);
     BOOST_CHECK(equal(begin(expectedLeft), end(expectedLeft), begin(actualLeft)));
     BOOST_CHECK(equal(begin(expectedRight), end(expectedRight), begin(actualRight)));
+}
+
+BOOST_AUTO_TEST_CASE( instance_builder_with_two_devices ) {
+    auto deviceGraph = DeviceGraphFactory::createDeviceGraph();
+    auto parameterCopyDevice = TestDevices::parameterCopyDevice(3, 1);
+    auto deviceIdOne = deviceGraph->addDevice(parameterCopyDevice);
+    deviceGraph->parameterValue(deviceIdOne, 1, 4.0);
+    auto deviceIdTwo = deviceGraph->addDevice(parameterCopyDevice);
+    deviceGraph->parameterValue(deviceIdTwo, 1, 3.0);
+    deviceGraph->connect(deviceIdOne, deviceIdTwo);
+    unsigned int bufferSize = 56;
+    auto instance = deviceGraph->createInstance(bufferSize);
+    auto expectedLeft = DataBuffer(bufferSize);
+    auto expectedRight = DataBuffer(bufferSize);
+    auto actualLeft = DataBuffer(bufferSize);
+    auto actualRight = DataBuffer(bufferSize);
+    std::fill(begin(expectedLeft), end(expectedLeft), 3.0);
+    std::fill(begin(expectedRight), end(expectedRight), 3.0);
+    OutputChannels beginIt = {begin(actualLeft), begin(actualRight)};
+    OutputChannels endIt = {end(actualLeft), end(actualRight)};
+    (*instance)(beginIt, endIt);
+    BOOST_CHECK(equal(begin(expectedLeft), end(expectedLeft), begin(actualLeft)));
+    BOOST_CHECK(equal(begin(expectedRight), end(expectedRight), begin(actualRight)));
+}
+
+BOOST_AUTO_TEST_CASE( find_leafs_should_find_leafs_connected_to_output_device ) {
+    auto deviceGraph = std::dynamic_pointer_cast<DeviceGraphImplementation>(DeviceGraphFactory::createDeviceGraph());
+    auto parameterCopyDevice = TestDevices::parameterCopyDevice(3, 1);
+    std::vector<IndexType> deviceIds = {
+            deviceGraph->addDevice(parameterCopyDevice),
+            deviceGraph->addDevice(parameterCopyDevice),
+            deviceGraph->addDevice(parameterCopyDevice),
+            deviceGraph->addDevice(parameterCopyDevice),
+            deviceGraph->addDevice(parameterCopyDevice),
+    };
+    deviceGraph->connect(deviceIds[0], deviceIds[1]);
+    deviceGraph->connect(deviceIds[1], deviceIds[2]);
+    deviceGraph->connect(deviceIds[3], deviceIds[1]);
+    deviceGraph->connect(deviceIds[4], deviceIds[3]);
+    deviceGraph->connect(deviceIds[0], deviceIds[2]);
+    deviceGraph->outputDeviceId(deviceIds[2]);
+    auto actualLeafs = deviceGraph->_instanceBuilder->findLeafs();
+    std::vector<DeviceGraphImplementation::Vertex> expectedLeafs = {
+            deviceGraph->vertexFromDeviceId(deviceIds[0]),
+            deviceGraph->vertexFromDeviceId(deviceIds[4]),
+    };
+    BOOST_CHECK(equal(begin(expectedLeafs), end(expectedLeafs), begin(actualLeafs)));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

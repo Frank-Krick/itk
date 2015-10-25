@@ -103,7 +103,7 @@ bool DeviceGraphImplementation::isConnected(IndexType sourceId, IndexType target
 }
 
 Instance::Ptr DeviceGraphImplementation::createInstance(unsigned int bufferSize) {
-    return _instanceBuilder.createInstance(bufferSize);
+    return _instanceBuilder->createInstance(bufferSize);
 }
 
 bool DeviceGraphImplementation::isInstanceUpToDate(Instance &instance) {
@@ -187,7 +187,10 @@ void DeviceGraphImplementation::parameterValue(IndexType deviceId, IndexType par
     _parameterTable->parameterValue(deviceId, parameterId, value);
 }
 
-DeviceGraphImplementation::DeviceGraphImplementation() : _instanceBuilder(*this, _graph, *_parameterTable) {}
+DeviceGraphImplementation::DeviceGraphImplementation() {
+    _instanceBuilder = make_shared<InstanceBuilder<Graph, DeviceGraphImplementation, VertexData, EdgeData>>(
+            *this, _graph, *_parameterTable);
+}
 
 DeviceWrapper::DeviceWrapper() {
     vertex = 0;

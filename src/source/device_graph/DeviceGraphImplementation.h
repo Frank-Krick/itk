@@ -33,6 +33,8 @@ public:
     virtual bool isConnected(IndexType sourceId, IndexType targetId, IndexType parameterId) override;
     virtual AudioConnections audioConnections();
     virtual ControlConnections controlConnections();
+    virtual void outputDeviceId(IndexType deviceId) { _outputDeviceId = deviceId; }
+    virtual IndexType outputDeviceId() { return _outputDeviceId; }
 
     virtual Instance::Ptr createInstance(unsigned int bufferSize) override;
     virtual bool isInstanceUpToDate(Instance &instance) override;
@@ -53,27 +55,30 @@ public:
      */
     typedef boost::adjacency_list<
             boost::vecS,
-            boost::listS,
+            boost::vecS,
             boost::bidirectionalS,
             VertexData, EdgeData> Graph;
 
+    typedef Graph::vertex_descriptor Vertex;
+    typedef Graph::edge_descriptor Edge;
 
     DeviceGraphImplementation();
     virtual ~DeviceGraphImplementation();
 
+    Vertex vertexFromDeviceId(IndexType deviceId);
+
+    InstanceBuilder<Graph, DeviceGraphImplementation, VertexData, EdgeData>::Ptr _instanceBuilder;
+
 private:
-    typedef Graph::vertex_descriptor Vertex;
-    typedef Graph::edge_descriptor Edge;
     typedef std::unordered_map<IndexType, DeviceWrapper> DeviceTable;
     typedef std::unordered_map<IndexType, Graph::vertex_descriptor> DeviceIdVertexMap;
 
+    IndexType _outputDeviceId = 0;
     DeviceTable _deviceTable;
     DeviceIdVertexMap _deviceIdVertexMap;
     Graph _graph;
     ParameterTable::Ptr _parameterTable = std::make_shared<ParameterTableImplementation>();
-    InstanceBuilder<Graph> _instanceBuilder;
 
-    Vertex vertexFromDeviceId(IndexType deviceId);
     DeviceDescription describeDevice(DeviceWrapper& device);
 };
 
