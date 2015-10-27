@@ -1,7 +1,3 @@
-//
-// Created by Frank Krick on 9/16/15.
-//
-
 #include "InputCopyAudioFunctor.h"
 
 void InputCopyAudioFunctor::operator()(InputChannels beginIn, InputChannels endIn, OutputChannels beginOut,
@@ -23,8 +19,7 @@ ParameterList InputCopyAudioFunctor::parameterList() {
 }
 
 std::shared_ptr<AudioFunctor> InputCopyAudioFunctor::clone() {
-    auto functor = new InputCopyAudioFunctor(_deviceId, _sampleRate);
-    return std::shared_ptr<AudioFunctor>((AudioFunctor *)functor);
+    return std::make_shared<InputCopyAudioFunctor>(_deviceId, _sampleRate);
 }
 
 void InputCopyAudioFunctor::reset() {}

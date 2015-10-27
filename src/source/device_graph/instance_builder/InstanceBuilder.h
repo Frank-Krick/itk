@@ -21,21 +21,101 @@ public:
     typedef FunctorList<AudioFunctor::Ptr> AudioFunctorList;
     typedef FunctorList<ControlFunctor::Ptr> ControlFunctorList;
 
+    struct Partition {
+    public:
+        typedef std::shared_ptr<Partition> Ptr;
+        std::vector<typename Graph::vertex_descriptor> vertices;
+        bool isOutput = false;
+        typename Graph::vertex_descriptor next;
+        IndexType functorId = 0;
+        IndexType connectTo = 0;
+        IndexType index = 0;
+        AudioFunctorList::Ptr functorList;
+    };
+
+    typedef std::vector<typename Partition::Ptr> Partitions;
+
     Instance::Ptr createInstance(unsigned int bufferSize) {
         auto instance = std::make_shared<InstanceImplementation>(_parameterTable);
         instance->bufferSize(bufferSize);
-        auto devices = _deviceGraph.devices();
-        if (devices.size() > 0) {
-            auto functorList = std::make_shared<AudioFunctorList>();
-            for (auto device : devices) {
-                auto functor = device.device->functor(device.deviceId);
-                functorList->push_back(std::dynamic_pointer_cast<AudioFunctor>(functor));
-            }
-            auto functorId = instance->addAudioFunctorList(functorList);
-            instance->connectOutput(functorId);
+        if (_deviceGraph.isOutputDeviceValid()) {
+            auto partitions = createPartitions();
+            createAndAddFunctorLists(std::begin(partitions), std::end(partitions), *instance);
+            createAndAddConnections(partitions, *instance);
         }
         instance->allocateMemory();
         return instance;
+    }
+
+    void createAndAddFunctorLists(
+            typename Partitions::iterator begin,
+            typename Partitions::iterator end,
+            InstanceImplementation &instance) {
+
+        for (auto it = begin; it != end; it++) {
+            (*it)->functorList = createFunctorList(*(*it));
+            (*it)->functorId = instance.addAudioFunctorList((*it)->functorList);
+        }
+    }
+
+    void createAndAddConnections(
+            Partitions &partitions,
+            InstanceImplementation &instance) {
+
+        for (auto it = std::begin(partitions); it != std::end(partitions); ++it) {
+            if (not (*it)->isOutput) {
+                auto target = partitions[(*it)->connectTo]->functorId;
+                auto source = (*it)->functorId;
+                instance.connect(source, target);
+            }
+        }
+    }
+
+    AudioFunctorList::Ptr createFunctorList(const Partition &partition) {
+        std::vector<IndexType> deviceIds(partition.vertices.size());
+        std::transform(std::begin(partition.vertices), std::end(partition.vertices), std::begin(deviceIds),
+                       [this](typename DeviceGraph::Vertex vertex) -> IndexType {
+                           return _graph[vertex].deviceId;
+                       });
+        auto functorList = std::make_shared<AudioFunctorList>();
+        for (auto deviceId : deviceIds) {
+            auto functor = _deviceGraph.device(deviceId).device->functor(deviceId);
+            functorList->push_back(std::dynamic_pointer_cast<AudioFunctor>(functor));
+        }
+        return functorList;
+    }
+
+    Partitions createPartitions() {
+        std::vector<typename Partition::Ptr> partitions;
+        auto leafs = findLeafs();
+        for (auto leaf : leafs) {
+            auto leafPartition = createPartition(leaf);
+            leafPartition->index = partitions.size();
+            partitions.push_back(leafPartition);
+        }
+        return expandLeafPartitions(partitions);
+    }
+
+    std::vector<typename Partition::Ptr> expandLeafPartitions(std::vector<typename Partition::Ptr> &leafPartitions) {
+        std::vector<typename Partition::Ptr> partitions(leafPartitions);
+        for (auto leafPartition : leafPartitions) {
+            if (not leafPartition->isOutput) {
+                auto prevPartition = leafPartition;
+                auto partition = createPartition(leafPartition->next);
+                partition->index = partitions.size();
+                partitions.push_back(partition);
+                prevPartition->connectTo = partition->index;
+                prevPartition = partition;
+                while (not partition->isOutput) {
+                    partition = createPartition(partition->next);
+                    partition->index = partitions.size();
+                    partitions.push_back(partition);
+                    prevPartition->connectTo = partition->index;
+                    prevPartition = partition;
+                }
+            }
+        }
+        return partitions;
     }
 
     InstanceBuilder(DeviceGraph &deviceGraph, Graph &graph, ParameterTable &parameterTable)
@@ -46,7 +126,6 @@ public:
     DeviceGraph &_deviceGraph;
     Graph &_graph;
     ParameterTable &_parameterTable;
-
     /*
      * Collect leafs is a BFS visitor that collects the leafs in the device
      * graph in the connected component of the output device. The BFS has
@@ -71,15 +150,41 @@ public:
         Leafs & _leafs;
     };
 
-    std::vector<IndexType> findPartition(typename DeviceGraph::Vertex start) {
-        std::vector<IndexType> result = { _graph[start].deviceId };
+    typename Partition::Ptr createPartition(typename DeviceGraph::Vertex start) {
+        std::vector<typename Graph::vertex_descriptor> result { start };
         auto vertex = start;
-        while (boost::out_degree(start, _graph) == 1) {
-            typename Graph::edge_iterator ei, ei_end;
+        if (boost::out_degree(vertex, _graph) == 1) {
+            typename Graph::out_edge_iterator ei, ei_end;
             std::tie(ei, ei_end) = boost::out_edges(start, _graph);
-            vertex = (*ei).second;
+            auto nextVertex = boost::target(*ei, _graph);
+            /* select all dependend nodes that can be computed afterwards without
+             * dependencies unless the node is the root.
+             */
+            while (boost::out_degree(vertex, _graph) == 1 and boost::in_degree(vertex, _graph) == 1) {
+                result.push_back(nextVertex);
+                std::tie(ei, ei_end) = boost::out_edges(nextVertex, _graph);
+                vertex = nextVertex;
+                nextVertex = boost::target(*ei, _graph);
+            }
+            vertex = nextVertex;
         }
-        return result;
+
+        /* decide what to do with "leftovers" */
+        if (boost::out_degree(vertex, _graph) == 0 and
+                    (boost::in_degree(vertex, _graph) == 0 or boost::in_degree(vertex, _graph) == 1)) {
+            auto partition = std::make_shared<Partition>();
+            partition->isOutput = true;
+            partition->next = vertex;
+            result.push_back(vertex);
+            partition->vertices = result;
+            return partition;
+        } else {
+            auto partition = std::make_shared<Partition>();
+            partition->isOutput = false;
+            partition->next = vertex;
+            partition->vertices = result;
+            return partition;
+        }
     }
 
     std::vector<typename Graph::vertex_descriptor> findLeafs() {

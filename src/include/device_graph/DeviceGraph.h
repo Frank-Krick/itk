@@ -55,6 +55,7 @@ public:
     virtual ControlConnections controlConnections() = 0;
     virtual void outputDeviceId(IndexType deviceId) = 0;
     virtual IndexType outputDeviceId() = 0;
+    virtual bool isOutputDeviceValid() = 0;
     /*
      * Methods to handle devices in the device graph
      */

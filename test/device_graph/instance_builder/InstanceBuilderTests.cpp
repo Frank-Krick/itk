@@ -1,7 +1,6 @@
 #include <boost/test/unit_test.hpp>
 
 #include <device_graph/DeviceGraphFactory.h>
-#include <Typedef.h>
 #include "../../test_data/device/TestDevices.h"
 #include "../../../src/source/device_graph/DeviceGraphImplementation.h"
 
@@ -34,6 +33,7 @@ BOOST_AUTO_TEST_CASE( instance_builder_with_one_device ) {
     auto parameterCopyDevice = TestDevices::parameterCopyDevice(3, 1);
     auto deviceId = deviceGraph->addDevice(parameterCopyDevice);
     deviceGraph->parameterValue(deviceId, 1, 4.0);
+    deviceGraph->outputDeviceId(deviceId);
     unsigned int bufferSize = 56;
     auto instance = deviceGraph->createInstance(bufferSize);
     auto expectedLeft = DataBuffer(bufferSize);
@@ -57,6 +57,7 @@ BOOST_AUTO_TEST_CASE( instance_builder_with_two_devices ) {
     auto deviceIdTwo = deviceGraph->addDevice(parameterCopyDevice);
     deviceGraph->parameterValue(deviceIdTwo, 1, 3.0);
     deviceGraph->connect(deviceIdOne, deviceIdTwo);
+    deviceGraph->outputDeviceId(deviceIdTwo);
     unsigned int bufferSize = 56;
     auto instance = deviceGraph->createInstance(bufferSize);
     auto expectedLeft = DataBuffer(bufferSize);
@@ -65,6 +66,33 @@ BOOST_AUTO_TEST_CASE( instance_builder_with_two_devices ) {
     auto actualRight = DataBuffer(bufferSize);
     std::fill(begin(expectedLeft), end(expectedLeft), 3.0);
     std::fill(begin(expectedRight), end(expectedRight), 3.0);
+    OutputChannels beginIt = {begin(actualLeft), begin(actualRight)};
+    OutputChannels endIt = {end(actualLeft), end(actualRight)};
+    (*instance)(beginIt, endIt);
+    BOOST_CHECK(equal(begin(expectedLeft), end(expectedLeft), begin(actualLeft)));
+    BOOST_CHECK(equal(begin(expectedRight), end(expectedRight), begin(actualRight)));
+}
+
+BOOST_AUTO_TEST_CASE( instance_builder_for_small_device_tree ) {
+    auto deviceGraph = DeviceGraphFactory::createDeviceGraph();
+    auto parameterCopyDevice = TestDevices::parameterCopyDevice(3, 1);
+    auto deviceIdOne = deviceGraph->addDevice(parameterCopyDevice);
+    deviceGraph->parameterValue(deviceIdOne, 1, 4.0);
+    auto deviceIdTwo = deviceGraph->addDevice(parameterCopyDevice);
+    deviceGraph->parameterValue(deviceIdTwo, 1, 3.0);
+    auto inputAddDevice = TestDevices::inputAddDevice();
+    auto deviceIdThree = deviceGraph->addDevice(inputAddDevice);
+    deviceGraph->outputDeviceId(deviceIdThree);
+    deviceGraph->connect(deviceIdOne, deviceIdThree);
+    deviceGraph->connect(deviceIdTwo, deviceIdThree);
+    unsigned int bufferSize = 78;
+    auto instance = deviceGraph->createInstance(bufferSize);
+    auto expectedLeft = DataBuffer(bufferSize);
+    auto expectedRight = DataBuffer(bufferSize);
+    std::fill(begin(expectedLeft), end(expectedLeft), 14.0);
+    std::fill(begin(expectedRight), end(expectedRight), 14.0);
+    auto actualLeft = DataBuffer(bufferSize);
+    auto actualRight = DataBuffer(bufferSize);
     OutputChannels beginIt = {begin(actualLeft), begin(actualRight)};
     OutputChannels endIt = {end(actualLeft), end(actualRight)};
     (*instance)(beginIt, endIt);

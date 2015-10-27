@@ -221,4 +221,9 @@ DeviceWrapper &DeviceWrapper::operator=(DeviceWrapper wrapper) {
     return *this;
 }
 
+bool DeviceGraphImplementation::isOutputDeviceValid() {
+    if (_deviceIdVertexMap.find(_outputDeviceId) == std::end(_deviceIdVertexMap)) return false;
+    return true;
+}
+
 } // namespace itk

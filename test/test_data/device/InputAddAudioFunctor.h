@@ -1,12 +1,12 @@
-#ifndef INSTRUMENT_TOOL_KIT_INPUTCOPYAUDIOFUNCTOR_H
-#define INSTRUMENT_TOOL_KIT_INPUTCOPYAUDIOFUNCTOR_H
+#ifndef INSTRUMENT_TOOL_KIT_INPUTADDAUDIOFUNCTOR_H
+#define INSTRUMENT_TOOL_KIT_INPUTADDAUDIOFUNCTOR_H
 
 #include <processing/generator/AudioFunctor.h>
 
 
 using namespace itk;
 
-class InputCopyAudioFunctor : public AudioFunctor {
+class InputAddAudioFunctor : public AudioFunctor {
 public:
     virtual void operator () (
             InputChannels beginIn, InputChannels endIn,
@@ -23,8 +23,8 @@ public:
 
     virtual void reset() override;
 
-    InputCopyAudioFunctor(IndexType deviceId, unsigned int sampleRate);
+    InputAddAudioFunctor(IndexType deviceId, unsigned int sampleRate);
 };
 
 
-#endif //INSTRUMENT_TOOL_KIT_INPUTCOPYAUDIOFUNCTOR_H
+#endif //INSTRUMENT_TOOL_KIT_INPUTADDAUDIOFUNCTOR_H

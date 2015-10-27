@@ -5,6 +5,8 @@
 #include "InstanceImplementation.h"
 
 #include <boost/iterator/counting_iterator.hpp>
+#include <algorithm>
+
 
 namespace itk {
 
@@ -48,19 +50,21 @@ void InstanceImplementation::calculateAudioOutput() {
             endOut[1] = end(wrapper->right);
 
             auto input = findAudioDevicePredecessors(node);
-            auto endIn = InputChannels();
-            auto beginIn = InputChannels();
+            auto endIn = InputChannels(std::max(input.size() * 2, 2UL));
+            auto beginIn = InputChannels(std::max(input.size() * 2, 2UL));
             if (input.size() == 0) {
                 beginIn[0] = begin(wrapper->left);
                 beginIn[1] = begin(wrapper->left);
                 endIn[0] = end(wrapper->left);
                 endIn[1] = end(wrapper->left);
             } else {
-                auto inNode = audioFunctorTable[input[0]];
-                beginIn[0] = begin(inNode->left);
-                beginIn[1] = begin(inNode->right);
-                endIn[0] = end(inNode->left);
-                endIn[1] = end(inNode->right);
+                for (auto inputId : input) {
+                    auto inNode = audioFunctorTable[inputId];
+                    beginIn[0] = begin(inNode->left);
+                    beginIn[1] = begin(inNode->right);
+                    endIn[0] = end(inNode->left);
+                    endIn[1] = end(inNode->right);
+                }
             }
             auto functor = wrapper->functor;
             auto inputParameterMap = createInputParameterMapForFunctorList<AudioFunctor>(*wrapper);

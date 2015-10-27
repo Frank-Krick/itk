@@ -35,6 +35,7 @@ public:
     virtual ControlConnections controlConnections();
     virtual void outputDeviceId(IndexType deviceId) { _outputDeviceId = deviceId; }
     virtual IndexType outputDeviceId() { return _outputDeviceId; }
+    virtual bool isOutputDeviceValid();
 
     virtual Instance::Ptr createInstance(unsigned int bufferSize) override;
     virtual bool isInstanceUpToDate(Instance &instance) override;

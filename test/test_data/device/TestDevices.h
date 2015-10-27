@@ -14,6 +14,7 @@ class TestDevices {
 public:
     static Device::Ptr parameterCopyDevice(IndexType numParameters, IndexType sourceParameterId);
     static Device::Ptr inputCopyDevice();
+    static Device::Ptr inputAddDevice();
 };
 
 

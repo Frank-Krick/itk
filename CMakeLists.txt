@@ -104,7 +104,7 @@ set(TEST_FILES
         test/test_data/device/TestFunctorLists.h
         test/test_data/device/InputCopyAudioFunctor.cpp
         test/test_data/device/InputCopyAudioFunctor.h
-        test/device_graph/instance_builder/InstanceBuilderTests.cpp)
+        test/device_graph/instance_builder/InstanceBuilderTests.cpp test/test_data/device/InputAddAudioFunctor.cpp test/test_data/device/InputAddAudioFunctor.h)
 
 add_executable(instrument_tool_kit src/source/main.cpp ${SOURCE_FILES})
 
