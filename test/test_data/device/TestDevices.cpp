@@ -10,6 +10,7 @@
 #include "../../src/source/device/DeviceImplementation.h"
 #include "InputCopyAudioFunctor.h"
 #include "InputAddAudioFunctor.h"
+#include "ConstantAddAudioFunctor.h"
 
 using std::stringstream;
 
@@ -34,6 +35,14 @@ Device::Ptr TestDevices::inputCopyDevice() {
 Device::Ptr TestDevices::inputAddDevice() {
     auto device = std::make_shared<DeviceImplementation>();
     auto functor = std::make_shared<InputAddAudioFunctor>(0, 44100);
+    device->functor(functor);
+    device->deviceType(DeviceType::AUDIO);
+    return device;
+}
+
+Device::Ptr TestDevices::constantAddDevice(DataType constant) {
+    auto device = std::make_shared<DeviceImplementation>();
+    auto functor = std::make_shared<ConstantAddAudioFunctor>(0, 44100, constant);
     device->functor(functor);
     device->deviceType(DeviceType::AUDIO);
     return device;

@@ -1,7 +1,3 @@
-//
-// Created by Frank Krick on 9/12/15.
-//
-
 #ifndef INSTRUMENT_TOOL_KIT_TESTDEVICES_H
 #define INSTRUMENT_TOOL_KIT_TESTDEVICES_H
 
@@ -15,6 +11,7 @@ public:
     static Device::Ptr parameterCopyDevice(IndexType numParameters, IndexType sourceParameterId);
     static Device::Ptr inputCopyDevice();
     static Device::Ptr inputAddDevice();
+    static Device::Ptr constantAddDevice(DataType constant);
 };
 
 

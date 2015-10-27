@@ -14,6 +14,8 @@ void InputAddAudioFunctor::operator()(InputChannels beginIn, InputChannels endIn
         }
         *outputLeft = value;
         *outputRight = value;
+        ++outputLeft;
+        ++outputRight;
     }
 }
 

@@ -58,12 +58,14 @@ void InstanceImplementation::calculateAudioOutput() {
                 endIn[0] = end(wrapper->left);
                 endIn[1] = end(wrapper->left);
             } else {
+                IndexType offset = 0;
                 for (auto inputId : input) {
                     auto inNode = audioFunctorTable[inputId];
-                    beginIn[0] = begin(inNode->left);
-                    beginIn[1] = begin(inNode->right);
-                    endIn[0] = end(inNode->left);
-                    endIn[1] = end(inNode->right);
+                    beginIn[offset] = begin(inNode->left);
+                    beginIn[offset + 1] = begin(inNode->right);
+                    endIn[offset] = end(inNode->left);
+                    endIn[offset + 1] = end(inNode->right);
+                    offset += 2;
                 }
             }
             auto functor = wrapper->functor;
@@ -120,8 +122,9 @@ void InstanceImplementation::calculateControlParameter() {
     }
 }
 
-std::vector<IndexType> InstanceImplementation::findAudioDeviceChildren(std::vector<IndexType>::iterator begin,
-                                                                       std::vector<IndexType>::iterator end) {
+std::unordered_set<IndexType> InstanceImplementation::findAudioDeviceChildren(
+        std::unordered_set<IndexType>::iterator begin,
+        std::unordered_set<IndexType>::iterator end) {
 
     std::vector<IndexType> result;
     for (auto it = begin; it != end; ++it) {
@@ -130,7 +133,7 @@ std::vector<IndexType> InstanceImplementation::findAudioDeviceChildren(std::vect
             result.push_back(child);
         }
     }
-    return result;
+    return std::unordered_set<IndexType>(std::cbegin(result), std::cend(result));
 }
 
 std::vector<IndexType> InstanceImplementation::findChildren(AudioEdgeList edgeList) {
@@ -180,7 +183,7 @@ void InstanceImplementation::distributeParametersAlongEdges(IndexType vertexId) 
     }
 }
 
-std::vector<IndexType> InstanceImplementation::findAudioDeviceLeafs() {
+std::unordered_set<IndexType> InstanceImplementation::findAudioDeviceLeafs() {
     using std::unordered_set;
     using std::begin;
     using std::end;
@@ -194,7 +197,7 @@ std::vector<IndexType> InstanceImplementation::findAudioDeviceLeafs() {
             leafs.erase(edge.second);
         }
     }
-    return std::vector<IndexType>(cbegin(leafs), cend(leafs));
+    return leafs;
 }
 
 std::vector<IndexType> InstanceImplementation::findControlDeviceLeafs() {

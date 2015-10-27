@@ -82,7 +82,7 @@ private:
     void calculateControlParameter();
     void calculateAudioOutput();
     std::vector<IndexType> findControlDeviceLeafs();
-    std::vector<IndexType> findAudioDeviceLeafs();
+    std::unordered_set<IndexType> findAudioDeviceLeafs();
 
     template <typename T>
     std::unique_ptr<typename T::ParameterDeviceMap> createInputParameterMapForFunctorList(
@@ -110,8 +110,8 @@ private:
     std::vector<IndexType> findChildren(AudioEdgeList edgeList);
     std::vector<IndexType> findControlDeviceChildren(
             std::vector<IndexType>::iterator begin, std::vector<IndexType>::iterator end);
-    std::vector<IndexType> findAudioDeviceChildren(
-            std::vector<IndexType>::iterator begin, std::vector<IndexType>::iterator end);
+    std::unordered_set<IndexType> findAudioDeviceChildren(
+            std::unordered_set<IndexType>::iterator begin, std::unordered_set<IndexType>::iterator end);
     std::vector<IndexType> findAudioDevicePredecessors(IndexType vertexId);
 
     inline bool isOutputFunctorValid() {

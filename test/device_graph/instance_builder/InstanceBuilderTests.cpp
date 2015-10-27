@@ -100,6 +100,14 @@ BOOST_AUTO_TEST_CASE( instance_builder_for_small_device_tree ) {
     BOOST_CHECK(equal(begin(expectedRight), end(expectedRight), begin(actualRight)));
 }
 
+BOOST_AUTO_TEST_CASE( tree_of_height_three ) {
+    auto deviceGraph = DeviceGraphFactory::createDeviceGraph();
+    auto parameterCopyDevice = TestDevices::parameterCopyDevice(3, 1);
+    auto inputAddDevice = TestDevices::inputAddDevice();
+    auto constantAddDevice = TestDevices::constantAddDevice(1);
+    BOOST_CHECK(1 == 2);
+}
+
 BOOST_AUTO_TEST_CASE( find_leafs_should_find_leafs_connected_to_output_device ) {
     auto deviceGraph = std::dynamic_pointer_cast<DeviceGraphImplementation>(DeviceGraphFactory::createDeviceGraph());
     auto parameterCopyDevice = TestDevices::parameterCopyDevice(3, 1);

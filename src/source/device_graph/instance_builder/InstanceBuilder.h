@@ -67,6 +67,9 @@ public:
                 auto target = partitions[(*it)->connectTo]->functorId;
                 auto source = (*it)->functorId;
                 instance.connect(source, target);
+            } else {
+                auto target = (*it)->functorId;
+                instance.connectOutput(target);
             }
         }
     }
@@ -97,14 +100,24 @@ public:
     }
 
     std::vector<typename Partition::Ptr> expandLeafPartitions(std::vector<typename Partition::Ptr> &leafPartitions) {
+        std::unordered_map<IndexType, IndexType> prevVertexToIndexMap;
         std::vector<typename Partition::Ptr> partitions(leafPartitions);
         for (auto leafPartition : leafPartitions) {
             if (not leafPartition->isOutput) {
                 auto prevPartition = leafPartition;
-                auto partition = createPartition(leafPartition->next);
-                partition->index = partitions.size();
-                partitions.push_back(partition);
-                prevPartition->connectTo = partition->index;
+                typename Partition::Ptr partition;
+                auto partitionIndexIterator = prevVertexToIndexMap.find(prevPartition->next);
+                if (partitionIndexIterator == std::end(prevVertexToIndexMap)) {
+                    partition = createPartition(leafPartition->next);
+                    partition->index = partitions.size();
+                    partitions.push_back(partition);
+                    prevPartition->connectTo = partition->index;
+                    prevVertexToIndexMap[prevPartition->next] = partition->index;
+                } else {
+                    partition = partitions[(*partitionIndexIterator).second];
+                    prevPartition->connectTo = partition->index;
+                }
+
                 prevPartition = partition;
                 while (not partition->isOutput) {
                     partition = createPartition(partition->next);
@@ -170,21 +183,23 @@ public:
         }
 
         /* decide what to do with "leftovers" */
+        auto partition = std::make_shared<Partition>();
         if (boost::out_degree(vertex, _graph) == 0 and
                     (boost::in_degree(vertex, _graph) == 0 or boost::in_degree(vertex, _graph) == 1)) {
-            auto partition = std::make_shared<Partition>();
-            partition->isOutput = true;
             partition->next = vertex;
             result.push_back(vertex);
             partition->vertices = result;
-            return partition;
         } else {
-            auto partition = std::make_shared<Partition>();
-            partition->isOutput = false;
             partition->next = vertex;
             partition->vertices = result;
-            return partition;
         }
+        auto outputVertex = _deviceGraph.vertexFromDeviceId(_deviceGraph.outputDeviceId());
+        if (outputVertex == partition->vertices.back()) {
+            partition->isOutput = true;
+        } else {
+            partition->isOutput = false;
+        }
+        return partition;
     }
 
     std::vector<typename Graph::vertex_descriptor> findLeafs() {
