@@ -103,12 +103,12 @@ public:
         std::unordered_map<IndexType, IndexType> prevVertexToIndexMap;
         std::vector<typename Partition::Ptr> partitions(leafPartitions);
         for (auto leafPartition : leafPartitions) {
-            if (not leafPartition->isOutput) {
-                auto prevPartition = leafPartition;
-                typename Partition::Ptr partition;
+            auto prevPartition = leafPartition;
+            typename Partition::Ptr partition;
+            while (not prevPartition->isOutput) {
                 auto partitionIndexIterator = prevVertexToIndexMap.find(prevPartition->next);
                 if (partitionIndexIterator == std::end(prevVertexToIndexMap)) {
-                    partition = createPartition(leafPartition->next);
+                    partition = createPartition(prevPartition->next);
                     partition->index = partitions.size();
                     partitions.push_back(partition);
                     prevPartition->connectTo = partition->index;
@@ -117,15 +117,7 @@ public:
                     partition = partitions[(*partitionIndexIterator).second];
                     prevPartition->connectTo = partition->index;
                 }
-
                 prevPartition = partition;
-                while (not partition->isOutput) {
-                    partition = createPartition(partition->next);
-                    partition->index = partitions.size();
-                    partitions.push_back(partition);
-                    prevPartition->connectTo = partition->index;
-                    prevPartition = partition;
-                }
             }
         }
         return partitions;
@@ -169,17 +161,15 @@ public:
         if (boost::out_degree(vertex, _graph) == 1) {
             typename Graph::out_edge_iterator ei, ei_end;
             std::tie(ei, ei_end) = boost::out_edges(start, _graph);
-            auto nextVertex = boost::target(*ei, _graph);
+            vertex = boost::target(*ei, _graph);
             /* select all dependend nodes that can be computed afterwards without
              * dependencies unless the node is the root.
              */
             while (boost::out_degree(vertex, _graph) == 1 and boost::in_degree(vertex, _graph) == 1) {
-                result.push_back(nextVertex);
-                std::tie(ei, ei_end) = boost::out_edges(nextVertex, _graph);
-                vertex = nextVertex;
-                nextVertex = boost::target(*ei, _graph);
+                result.push_back(vertex);
+                std::tie(ei, ei_end) = boost::out_edges(vertex, _graph);
+                vertex = boost::target(*ei, _graph);
             }
-            vertex = nextVertex;
         }
 
         /* decide what to do with "leftovers" */

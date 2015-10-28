@@ -4,6 +4,7 @@
 #include "../../test_data/device/TestDevices.h"
 #include "../../../src/source/device_graph/DeviceGraphImplementation.h"
 
+
 BOOST_AUTO_TEST_SUITE( InstanceBuilderTests )
 
 using namespace itk;
@@ -105,7 +106,36 @@ BOOST_AUTO_TEST_CASE( tree_of_height_three ) {
     auto parameterCopyDevice = TestDevices::parameterCopyDevice(3, 1);
     auto inputAddDevice = TestDevices::inputAddDevice();
     auto constantAddDevice = TestDevices::constantAddDevice(1);
-    BOOST_CHECK(1 == 2);
+    std::vector<IndexType> deviceIds {
+            deviceGraph->addDevice(parameterCopyDevice),
+            deviceGraph->addDevice(parameterCopyDevice),
+            deviceGraph->addDevice(parameterCopyDevice),
+            deviceGraph->addDevice(inputAddDevice),
+            deviceGraph->addDevice(constantAddDevice),
+            deviceGraph->addDevice(inputAddDevice),
+    };
+    deviceGraph->parameterValue(deviceIds[0], 1, 3.0);
+    deviceGraph->parameterValue(deviceIds[1], 1, 1.0);
+    deviceGraph->parameterValue(deviceIds[2], 1, 4.0);
+    deviceGraph->connect(deviceIds[0], deviceIds[3]);
+    deviceGraph->connect(deviceIds[1], deviceIds[3]);
+    deviceGraph->connect(deviceIds[2], deviceIds[4]);
+    deviceGraph->connect(deviceIds[3], deviceIds[5]);
+    deviceGraph->connect(deviceIds[4], deviceIds[5]);
+    deviceGraph->outputDeviceId(deviceIds[5]);
+    unsigned int bufferSize = 78;
+    auto instance = deviceGraph->createInstance(bufferSize);
+    auto expectedLeft = DataBuffer(bufferSize);
+    auto expectedRight = DataBuffer(bufferSize);
+    std::fill(begin(expectedLeft), end(expectedLeft), 27.0);
+    std::fill(begin(expectedRight), end(expectedRight), 27.0);
+    auto actualLeft = DataBuffer(bufferSize);
+    auto actualRight = DataBuffer(bufferSize);
+    OutputChannels beginIt = {begin(actualLeft), begin(actualRight)};
+    OutputChannels endIt = {end(actualLeft), end(actualRight)};
+    (*instance)(beginIt, endIt);
+    BOOST_CHECK(equal(begin(expectedLeft), end(expectedLeft), begin(actualLeft)));
+    BOOST_CHECK(equal(begin(expectedRight), end(expectedRight), begin(actualRight)));
 }
 
 BOOST_AUTO_TEST_CASE( find_leafs_should_find_leafs_connected_to_output_device ) {
