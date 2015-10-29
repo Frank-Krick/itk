@@ -170,6 +170,7 @@ BOOST_AUTO_TEST_CASE( device_graph_with_one_audio_and_one_control_device ) {
     auto rampControlDeviceId = deviceGraph->addDevice(rampControlDevice);
     deviceGraph->connect(rampControlDeviceId, parameterCopyDeviceId, 1);
     deviceGraph->outputDeviceId(parameterCopyDeviceId);
+    deviceGraph->parameterValue(parameterCopyDeviceId, 1, 3.0);
     unsigned int bufferSize = 78;
     auto instance = deviceGraph->createInstance(bufferSize);
     auto expectedLeft = DataBuffer(bufferSize);
