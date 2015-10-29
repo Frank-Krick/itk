@@ -108,7 +108,7 @@ set(TEST_FILES
         test/test_data/device/InputAddAudioFunctor.cpp
         test/test_data/device/InputAddAudioFunctor.h
         test/test_data/device/ConstantAddAudioFunctor.cpp
-        test/test_data/device/ConstantAddAudioFunctor.h)
+        test/test_data/device/ConstantAddAudioFunctor.h test/test_data/device/RampControlFunctor.cpp test/test_data/device/RampControlFunctor.h)
 
 add_executable(instrument_tool_kit src/source/main.cpp ${SOURCE_FILES})
 

@@ -1,7 +1,3 @@
-//
-// Created by Frank Krick on 9/13/15.
-//
-
 #include "InstanceImplementation.h"
 
 #include <boost/iterator/counting_iterator.hpp>
@@ -208,12 +204,13 @@ std::vector<IndexType> InstanceImplementation::findControlDeviceLeafs() {
     auto leafs = unordered_set<IndexType>(
             counting_iterator<IndexType>(0),
             counting_iterator<IndexType>(controlFunctorTable.size()));
-
+/*
     for (auto adjacencyList : controlDeviceEdges) {
         for (auto edge : adjacencyList) {
             leafs.erase(edge.second.deviceId);
         }
     }
+ */
     return std::vector<IndexType>(cbegin(leafs), cend(leafs));
 }
 
@@ -271,7 +268,7 @@ IndexType InstanceImplementation::addAudioFunctorList(AudioFunctorList::Ptr func
 IndexType InstanceImplementation::addControlFunctorList(ControlFunctorList::Ptr functorList) {
     using namespace std;
 
-    ControlFunctorWrapper functorWrapper;
+    auto functorWrapper = make_shared<FunctorWrapper<ControlFunctorList>>();
     functorWrapper->functor = functorList;
     functorWrapper->index = controlFunctorTable.size();
     controlFunctorTable.push_back(functorWrapper);

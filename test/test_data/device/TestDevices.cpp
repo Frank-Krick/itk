@@ -11,6 +11,7 @@
 #include "InputCopyAudioFunctor.h"
 #include "InputAddAudioFunctor.h"
 #include "ConstantAddAudioFunctor.h"
+#include "RampControlFunctor.h"
 
 using std::stringstream;
 
@@ -45,5 +46,13 @@ Device::Ptr TestDevices::constantAddDevice(DataType constant) {
     auto functor = std::make_shared<ConstantAddAudioFunctor>(0, 44100, constant);
     device->functor(functor);
     device->deviceType(DeviceType::AUDIO);
+    return device;
+}
+
+Device::Ptr TestDevices::rampControlDevice(IndexType rampSampleLength) {
+    auto device = std::make_shared<DeviceImplementation>();
+    auto functor = std::make_shared<RampControlFunctor>(0, 44100, rampSampleLength);
+    device->functor(functor);
+    device->deviceType(DeviceType::CONTROL);
     return device;
 }

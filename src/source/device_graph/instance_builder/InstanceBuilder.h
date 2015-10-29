@@ -8,7 +8,7 @@
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/copy.hpp>
 #include <boost/graph/transpose_graph.hpp>
-
+#include <limits>
 #include "../../processing/instance/InstanceImplementation.h"
 
 
@@ -30,7 +30,10 @@ public:
         IndexType functorId = 0;
         IndexType connectTo = 0;
         IndexType index = 0;
-        AudioFunctorList::Ptr functorList;
+        AudioFunctorList::Ptr audioFunctorList;
+        ControlFunctorList::Ptr controlFunctorList;
+        DeviceType deviceType = DeviceType::AUDIO;
+        IndexType parameter = 0;
     };
 
     typedef std::vector<typename Partition::Ptr> Partitions;
@@ -53,8 +56,13 @@ public:
             InstanceImplementation &instance) {
 
         for (auto it = begin; it != end; it++) {
-            (*it)->functorList = createFunctorList(*(*it));
-            (*it)->functorId = instance.addAudioFunctorList((*it)->functorList);
+            if ((*it)->deviceType == DeviceType::AUDIO) {
+                (*it)->audioFunctorList = createAudioFunctorList(*(*it));
+                (*it)->functorId = instance.addAudioFunctorList((*it)->audioFunctorList);
+            } else {
+                (*it)->controlFunctorList = createControlFunctorList(*(*it));
+                (*it)->functorId = instance.addControlFunctorList((*it)->controlFunctorList);
+            }
         }
     }
 
@@ -66,7 +74,11 @@ public:
             if (not (*it)->isOutput) {
                 auto target = partitions[(*it)->connectTo]->functorId;
                 auto source = (*it)->functorId;
-                instance.connect(source, target);
+                if ((*it)->deviceType == DeviceType::AUDIO) {
+                    instance.connect(source, target);
+                } else {
+                    instance.connect(source, target, (*it)->parameter);
+                }
             } else {
                 auto target = (*it)->functorId;
                 instance.connectOutput(target);
@@ -74,7 +86,21 @@ public:
         }
     }
 
-    AudioFunctorList::Ptr createFunctorList(const Partition &partition) {
+    ControlFunctorList::Ptr createControlFunctorList(const Partition &partition) {
+        std::vector<IndexType> deviceIds(partition.vertices.size());
+        std::transform(std::begin(partition.vertices), std::end(partition.vertices), std::begin(deviceIds),
+                       [this](typename DeviceGraph::Vertex vertex) -> IndexType {
+                           return _graph[vertex].deviceId;
+                       });
+        auto functorList = std::make_shared<ControlFunctorList>();
+        for (auto deviceId : deviceIds) {
+            auto functor = _deviceGraph.device(deviceId).device->functor(deviceId);
+            functorList->push_back(std::dynamic_pointer_cast<ControlFunctor>(functor));
+        }
+        return functorList;
+    }
+
+    AudioFunctorList::Ptr createAudioFunctorList(const Partition &partition) {
         std::vector<IndexType> deviceIds(partition.vertices.size());
         std::transform(std::begin(partition.vertices), std::end(partition.vertices), std::begin(deviceIds),
                        [this](typename DeviceGraph::Vertex vertex) -> IndexType {
@@ -112,6 +138,12 @@ public:
                     partition->index = partitions.size();
                     partitions.push_back(partition);
                     prevPartition->connectTo = partition->index;
+                    if (prevPartition->deviceType == DeviceType::CONTROL) {
+                        auto lastVertex = prevPartition->vertices.back();
+                        typename Graph::out_edge_iterator ei, ei_end;
+                        std::tie(ei, ei_end) = boost::out_edges(lastVertex, _graph);
+                        prevPartition->parameter = _graph[*ei].parameterId;
+                    }
                     prevVertexToIndexMap[prevPartition->next] = partition->index;
                 } else {
                     partition = partitions[(*partitionIndexIterator).second];
@@ -158,24 +190,40 @@ public:
     typename Partition::Ptr createPartition(typename DeviceGraph::Vertex start) {
         std::vector<typename Graph::vertex_descriptor> result { start };
         auto vertex = start;
+        auto deviceId = std::numeric_limits<IndexType>::max();
+        auto prevDeviceId = std::numeric_limits<IndexType>::max();
+        auto deviceType = DeviceType::AUDIO;
+        auto prevDeviceType = DeviceType::AUDIO;
         if (boost::out_degree(vertex, _graph) == 1) {
             typename Graph::out_edge_iterator ei, ei_end;
             std::tie(ei, ei_end) = boost::out_edges(start, _graph);
+            prevDeviceId = _graph[vertex].deviceId;
+            prevDeviceType = _deviceGraph.device(prevDeviceId).device->deviceType();
             vertex = boost::target(*ei, _graph);
             /* select all dependend nodes that can be computed afterwards without
              * dependencies unless the node is the root.
              */
-            while (boost::out_degree(vertex, _graph) == 1 and boost::in_degree(vertex, _graph) == 1) {
+            deviceId = _graph[vertex].deviceId;
+            deviceType = _deviceGraph.device(deviceId).device->deviceType();
+            while (boost::out_degree(vertex, _graph) == 1 and
+                    boost::in_degree(vertex, _graph) == 1 and
+                    prevDeviceType == deviceType) {
                 result.push_back(vertex);
+                prevDeviceId = _graph[vertex].deviceId;
+                prevDeviceType = _deviceGraph.device(prevDeviceId).device->deviceType();
                 std::tie(ei, ei_end) = boost::out_edges(vertex, _graph);
                 vertex = boost::target(*ei, _graph);
+                deviceId = _graph[vertex].deviceId;
+                deviceType = _deviceGraph.device(deviceId).device->deviceType();
             }
         }
 
         /* decide what to do with "leftovers" */
         auto partition = std::make_shared<Partition>();
         if (boost::out_degree(vertex, _graph) == 0 and
-                    (boost::in_degree(vertex, _graph) == 0 or boost::in_degree(vertex, _graph) == 1)) {
+                (boost::in_degree(vertex, _graph) == 0 or boost::in_degree(vertex, _graph) == 1) and
+                prevDeviceType == deviceType and
+                prevDeviceId != deviceId) {
             partition->next = vertex;
             result.push_back(vertex);
             partition->vertices = result;
@@ -183,6 +231,7 @@ public:
             partition->next = vertex;
             partition->vertices = result;
         }
+        partition->deviceType = prevDeviceType;
         auto outputVertex = _deviceGraph.vertexFromDeviceId(_deviceGraph.outputDeviceId());
         if (outputVertex == partition->vertices.back()) {
             partition->isOutput = true;

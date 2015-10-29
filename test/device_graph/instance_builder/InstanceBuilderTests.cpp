@@ -162,4 +162,26 @@ BOOST_AUTO_TEST_CASE( find_leafs_should_find_leafs_connected_to_output_device ) 
     BOOST_CHECK(equal(begin(expectedLeafs), end(expectedLeafs), begin(actualLeafs)));
 }
 
+BOOST_AUTO_TEST_CASE( device_graph_with_one_audio_and_one_control_device ) {
+    auto deviceGraph = std::dynamic_pointer_cast<DeviceGraphImplementation>(DeviceGraphFactory::createDeviceGraph());
+    auto parameterCopyDevice = TestDevices::parameterCopyDevice(3, 1);
+    auto rampControlDevice = TestDevices::rampControlDevice(30);
+    auto parameterCopyDeviceId = deviceGraph->addDevice(parameterCopyDevice);
+    auto rampControlDeviceId = deviceGraph->addDevice(rampControlDevice);
+    deviceGraph->connect(rampControlDeviceId, parameterCopyDeviceId, 1);
+    deviceGraph->outputDeviceId(parameterCopyDeviceId);
+    unsigned int bufferSize = 78;
+    auto instance = deviceGraph->createInstance(bufferSize);
+    auto expectedLeft = DataBuffer(bufferSize);
+    auto expectedRight = DataBuffer(bufferSize);
+    std::fill(begin(expectedLeft), end(expectedLeft), 27.0);
+    std::fill(begin(expectedRight), end(expectedRight), 27.0);
+    auto actualLeft = DataBuffer(bufferSize);
+    auto actualRight = DataBuffer(bufferSize);
+    OutputChannels beginIt = {begin(actualLeft), begin(actualRight)};
+    OutputChannels endIt = {end(actualLeft), end(actualRight)};
+    (*instance)(beginIt, endIt);
+    BOOST_CHECK(1 == 2);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

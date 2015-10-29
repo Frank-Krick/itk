@@ -12,6 +12,7 @@ public:
     static Device::Ptr inputCopyDevice();
     static Device::Ptr inputAddDevice();
     static Device::Ptr constantAddDevice(DataType constant);
+    static Device::Ptr rampControlDevice(IndexType rampSampleLength);
 };
 
 

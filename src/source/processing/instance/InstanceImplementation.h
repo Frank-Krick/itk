@@ -49,6 +49,7 @@ private:
     struct ControlEdgeEnd {
         IndexType parameterId = 0;
         IndexType deviceId = 0;
+        bool isAudioDevice = false;
     };
 
     typedef std::pair<IndexType, ControlEdgeEnd> ControlEdge;
