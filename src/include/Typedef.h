@@ -15,7 +15,7 @@ namespace itk {
     typedef DataBuffer::iterator Iterator;
     typedef DataBuffer::const_iterator ConstIterator;
     typedef std::array<Iterator, 2> OutputChannels;
-    typedef std::array<ConstIterator, 2> InputChannels;
+    typedef std::vector<ConstIterator> InputChannels;
 
 }
 

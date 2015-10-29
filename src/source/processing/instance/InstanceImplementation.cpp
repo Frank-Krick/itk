@@ -1,10 +1,8 @@
-//
-// Created by Frank Krick on 9/13/15.
-//
-
 #include "InstanceImplementation.h"
 
 #include <boost/iterator/counting_iterator.hpp>
+#include <algorithm>
+
 
 namespace itk {
 
@@ -12,15 +10,22 @@ void InstanceImplementation::operator () (OutputChannels beginOut, OutputChannel
     using std::cbegin;
     using std::cend;
     using std::copy;
-    initializeParameterMap();
-    calculateControlParameter();
-    calculateAudioOutput();
-    auto left = cbegin(audioFunctorTable[_audioOutput]->left);
-    auto right = cbegin(audioFunctorTable[_audioOutput]->right);
-    auto left_end = cend(audioFunctorTable[_audioOutput]->left);
-    auto right_end = cend(audioFunctorTable[_audioOutput]->right);
-    copy(left, left_end, beginOut[0]);
-    copy(right, right_end, beginOut[1]);
+    using std::fill;
+
+    if (isOutputFunctorValid()) {
+        initializeParameterMap();
+        calculateControlParameter();
+        calculateAudioOutput();
+        auto left = cbegin(audioFunctorTable[_audioOutput]->left);
+        auto right = cbegin(audioFunctorTable[_audioOutput]->right);
+        auto left_end = cend(audioFunctorTable[_audioOutput]->left);
+        auto right_end = cend(audioFunctorTable[_audioOutput]->right);
+        copy(left, left_end, beginOut[0]);
+        copy(right, right_end, beginOut[1]);
+    } else {
+        fill(beginOut[0], endOut[0], 0.0);
+        fill(beginOut[1], endOut[1], 0.0);
+    }
 }
 
 void InstanceImplementation::calculateAudioOutput() {
@@ -28,6 +33,7 @@ void InstanceImplementation::calculateAudioOutput() {
     using std::cbegin;
     using std::end;
     using std::cend;
+
     auto nodes = findAudioDeviceLeafs();
     while (nodes.size() > 0) {
         for (auto node : nodes) {
@@ -40,19 +46,23 @@ void InstanceImplementation::calculateAudioOutput() {
             endOut[1] = end(wrapper->right);
 
             auto input = findAudioDevicePredecessors(node);
-            auto endIn = InputChannels();
-            auto beginIn = InputChannels();
+            auto endIn = InputChannels(std::max(input.size() * 2, 2UL));
+            auto beginIn = InputChannels(std::max(input.size() * 2, 2UL));
             if (input.size() == 0) {
                 beginIn[0] = begin(wrapper->left);
                 beginIn[1] = begin(wrapper->left);
                 endIn[0] = end(wrapper->left);
                 endIn[1] = end(wrapper->left);
             } else {
-                auto inNode = audioFunctorTable[input[0]];
-                beginIn[0] = begin(inNode->left);
-                beginIn[1] = begin(inNode->right);
-                endIn[0] = end(inNode->left);
-                endIn[1] = end(inNode->right);
+                IndexType offset = 0;
+                for (auto inputId : input) {
+                    auto inNode = audioFunctorTable[inputId];
+                    beginIn[offset] = begin(inNode->left);
+                    beginIn[offset + 1] = begin(inNode->right);
+                    endIn[offset] = end(inNode->left);
+                    endIn[offset + 1] = end(inNode->right);
+                    offset += 2;
+                }
             }
             auto functor = wrapper->functor;
             auto inputParameterMap = createInputParameterMapForFunctorList<AudioFunctor>(*wrapper);
@@ -61,7 +71,6 @@ void InstanceImplementation::calculateAudioOutput() {
         nodes = findAudioDeviceChildren(begin(nodes), end(nodes));
     }
 }
-
 
 std::vector<IndexType> InstanceImplementation::findAudioDevicePredecessors(IndexType vertexId) {
     std::vector<IndexType> result;
@@ -109,8 +118,9 @@ void InstanceImplementation::calculateControlParameter() {
     }
 }
 
-std::vector<IndexType> InstanceImplementation::findAudioDeviceChildren(std::vector<IndexType>::iterator begin,
-                                                                       std::vector<IndexType>::iterator end) {
+std::unordered_set<IndexType> InstanceImplementation::findAudioDeviceChildren(
+        std::unordered_set<IndexType>::iterator begin,
+        std::unordered_set<IndexType>::iterator end) {
 
     std::vector<IndexType> result;
     for (auto it = begin; it != end; ++it) {
@@ -119,7 +129,7 @@ std::vector<IndexType> InstanceImplementation::findAudioDeviceChildren(std::vect
             result.push_back(child);
         }
     }
-    return result;
+    return std::unordered_set<IndexType>(std::cbegin(result), std::cend(result));
 }
 
 std::vector<IndexType> InstanceImplementation::findChildren(AudioEdgeList edgeList) {
@@ -169,7 +179,7 @@ void InstanceImplementation::distributeParametersAlongEdges(IndexType vertexId) 
     }
 }
 
-std::vector<IndexType> InstanceImplementation::findAudioDeviceLeafs() {
+std::unordered_set<IndexType> InstanceImplementation::findAudioDeviceLeafs() {
     using std::unordered_set;
     using std::begin;
     using std::end;
@@ -183,7 +193,7 @@ std::vector<IndexType> InstanceImplementation::findAudioDeviceLeafs() {
             leafs.erase(edge.second);
         }
     }
-    return std::vector<IndexType>(cbegin(leafs), cend(leafs));
+    return leafs;
 }
 
 std::vector<IndexType> InstanceImplementation::findControlDeviceLeafs() {
@@ -194,12 +204,13 @@ std::vector<IndexType> InstanceImplementation::findControlDeviceLeafs() {
     auto leafs = unordered_set<IndexType>(
             counting_iterator<IndexType>(0),
             counting_iterator<IndexType>(controlFunctorTable.size()));
-
+/*
     for (auto adjacencyList : controlDeviceEdges) {
         for (auto edge : adjacencyList) {
             leafs.erase(edge.second.deviceId);
         }
     }
+ */
     return std::vector<IndexType>(cbegin(leafs), cend(leafs));
 }
 
@@ -234,7 +245,7 @@ void InstanceImplementation::bufferSize(unsigned int bufferSize) {
 IndexType InstanceImplementation::addAudioFunctorList(AudioFunctorList::Ptr functorList) {
     using namespace std;
 
-    auto functorWrapper = AudioFunctorWrapper(new FunctorWrapper<AudioFunctorList>());
+    auto functorWrapper = make_shared<FunctorWrapper<AudioFunctorList>>();
     functorWrapper->functor = functorList;
     functorWrapper->index = audioFunctorTable.size();
     audioFunctorTable.push_back(functorWrapper);
@@ -257,7 +268,7 @@ IndexType InstanceImplementation::addAudioFunctorList(AudioFunctorList::Ptr func
 IndexType InstanceImplementation::addControlFunctorList(ControlFunctorList::Ptr functorList) {
     using namespace std;
 
-    ControlFunctorWrapper functorWrapper;
+    auto functorWrapper = make_shared<FunctorWrapper<ControlFunctorList>>();
     functorWrapper->functor = functorList;
     functorWrapper->index = controlFunctorTable.size();
     controlFunctorTable.push_back(functorWrapper);

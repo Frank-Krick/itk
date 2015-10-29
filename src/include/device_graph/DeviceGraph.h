@@ -8,7 +8,7 @@
 #include <Typedef.h>
 #include <device/Device.h>
 #include <parameter_table/ParameterTable.h>
-#include "DeviceGraphInstance.h"
+#include <processing/instance/Instance.h>
 
 #include <memory>
 #include <string>
@@ -53,6 +53,9 @@ public:
     virtual bool isConnected(IndexType sourceId, IndexType targetTd, IndexType parameterId) = 0;
     virtual AudioConnections audioConnections() = 0;
     virtual ControlConnections controlConnections() = 0;
+    virtual void outputDeviceId(IndexType deviceId) = 0;
+    virtual IndexType outputDeviceId() = 0;
+    virtual bool isOutputDeviceValid() = 0;
     /*
      * Methods to handle devices in the device graph
      */
@@ -68,8 +71,8 @@ public:
     /*
      * Managing instances of the device graph
      */
-    virtual DeviceGraphInstance::Ptr createInstance() = 0;
-    virtual bool isInstanceUpToDate(DeviceGraphInstance &instance) = 0;
+    virtual Instance::Ptr createInstance(unsigned int bufferSize) = 0;
+    virtual bool isInstanceUpToDate(Instance &instance) = 0;
 
     virtual ~DeviceGraph();
 };

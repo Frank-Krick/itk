@@ -16,30 +16,30 @@ using namespace boost;
 IndexType DeviceWrapper::nextDeviceId = 0;
 
 IndexType DeviceGraphImplementation::addDevice(Device::Ptr device) {
-    auto vertex = add_vertex(graph);
+    auto vertex = add_vertex(_graph);
     auto deviceWrapper = DeviceWrapper(vertex, device);
     auto deviceId = deviceWrapper.deviceId;
-    deviceTable[deviceId] = deviceWrapper;
-    deviceIdVertexMap[deviceId] = vertex;
-    parameterTable->registerDeviceParameters(deviceId, *device);
-    graph[vertex].deviceId = deviceId;
+    _deviceTable[deviceId] = deviceWrapper;
+    _deviceIdVertexMap[deviceId] = vertex;
+    _parameterTable->registerDeviceParameters(deviceId, *device);
+    _graph[vertex].deviceId = deviceId;
     return deviceId;
 }
 
 void DeviceGraphImplementation::removeDevice(IndexType deviceId) {
     auto vertex = vertexFromDeviceId(deviceId);
-    clear_vertex(vertex, graph);
-    remove_vertex(vertex, graph);
-    deviceTable.erase(deviceId);
-    deviceIdVertexMap.erase(deviceId);
-    parameterTable->unregisterDeviceParameters(deviceId);
+    clear_vertex(vertex, _graph);
+    remove_vertex(vertex, _graph);
+    _deviceTable.erase(deviceId);
+    _deviceIdVertexMap.erase(deviceId);
+    _parameterTable->unregisterDeviceParameters(deviceId);
 }
 
 void DeviceGraphImplementation::connect(IndexType sourceId, IndexType targetId) {
     auto sourceVertex = vertexFromDeviceId(sourceId);
     auto targetVertex = vertexFromDeviceId(targetId);
-    auto sourceDevice = deviceTable[sourceId];
-    auto targetDevice = deviceTable[targetId];
+    auto sourceDevice = _deviceTable[sourceId];
+    auto targetDevice = _deviceTable[targetId];
     if (sourceDevice.device->deviceType() != DeviceType::AUDIO ||
         targetDevice.device->deviceType() != DeviceType::AUDIO) {
 
@@ -51,8 +51,8 @@ void DeviceGraphImplementation::connect(IndexType sourceId, IndexType targetId) 
     } else {
         typename Graph::edge_descriptor edge;
         bool isNewEdge;
-        tie(edge, isNewEdge) = add_edge(sourceVertex, targetVertex, graph);
-        graph[edge].type = ConnectionType::AUDIO;
+        tie(edge, isNewEdge) = add_edge(sourceVertex, targetVertex, _graph);
+        _graph[edge].type = ConnectionType::AUDIO;
     }
 }
 
@@ -60,21 +60,21 @@ void DeviceGraphImplementation::connect(IndexType sourceId,
                                         IndexType targetId,
                                         IndexType parameterId) {
 
-    auto sourceType = deviceTable.at(sourceId).device->deviceType();
-    auto targetType = deviceTable.at(targetId).device->deviceType();
+    auto sourceType = _deviceTable.at(sourceId).device->deviceType();
+    auto targetType = _deviceTable.at(targetId).device->deviceType();
     if (sourceType == DeviceType::AUDIO)
         throw DeviceTypeMismatch(sourceType, targetType, ConnectionType::CONTROL);
 
-    if (!parameterTable->hasParameter(targetId, parameterId))
+    if (!_parameterTable->hasParameter(targetId, parameterId))
         throw DeviceParameterMissing(targetId, parameterId);
 
     auto sourceVertex = vertexFromDeviceId(sourceId);
     auto targetVertex = vertexFromDeviceId(targetId);
     typename Graph::edge_descriptor edge;
     bool isNewEdge;
-    tie(edge, isNewEdge) = add_edge(sourceVertex, targetVertex, graph);
-    graph[edge].type = ConnectionType::CONTROL;
-    graph[edge].parameterId = parameterId;
+    tie(edge, isNewEdge) = add_edge(sourceVertex, targetVertex, _graph);
+    _graph[edge].type = ConnectionType::CONTROL;
+    _graph[edge].parameterId = parameterId;
 }
 
 void DeviceGraphImplementation::disconnect(IndexType sourceId, IndexType targetId) {}
@@ -83,9 +83,9 @@ bool DeviceGraphImplementation::isConnected(IndexType sourceId, IndexType target
     typename Graph::out_edge_iterator ei, ei_end;
     auto sourceVertex = vertexFromDeviceId(sourceId);
     auto targetVertex = vertexFromDeviceId(targetId);
-    for (tie(ei, ei_end) = out_edges(sourceVertex, graph); ei != ei_end; ei++) {
-        if (graph[*ei].type == ConnectionType::AUDIO &&
-            target(*ei, graph) == targetVertex) return true;
+    for (tie(ei, ei_end) = out_edges(sourceVertex, _graph); ei != ei_end; ei++) {
+        if (_graph[*ei].type == ConnectionType::AUDIO &&
+            target(*ei, _graph) == targetVertex) return true;
     }
     return false;
 }
@@ -94,19 +94,19 @@ bool DeviceGraphImplementation::isConnected(IndexType sourceId, IndexType target
     typename Graph::out_edge_iterator ei, ei_end;
     auto sourceVertex = vertexFromDeviceId(sourceId);
     auto targetVertex = vertexFromDeviceId(targetId);
-    for (tie(ei, ei_end) = out_edges(sourceVertex, graph); ei != ei_end; ei++) {
-        if (graph[*ei].type == ConnectionType::CONTROL &&
-            target(*ei, graph) == targetVertex &&
-            graph[*ei].parameterId == parameterId) return true;
+    for (tie(ei, ei_end) = out_edges(sourceVertex, _graph); ei != ei_end; ei++) {
+        if (_graph[*ei].type == ConnectionType::CONTROL &&
+            target(*ei, _graph) == targetVertex &&
+            _graph[*ei].parameterId == parameterId) return true;
     }
     return false;
 }
 
-DeviceGraphInstance::Ptr DeviceGraphImplementation::createInstance() {
-    return std::unique_ptr<DeviceGraphInstance>();
+Instance::Ptr DeviceGraphImplementation::createInstance(unsigned int bufferSize) {
+    return _instanceBuilder->createInstance(bufferSize);
 }
 
-bool DeviceGraphImplementation::isInstanceUpToDate(DeviceGraphInstance &instance) {
+bool DeviceGraphImplementation::isInstanceUpToDate(Instance &instance) {
     return false;
 }
 
@@ -117,14 +117,14 @@ std::string DeviceWrapper::defaultName(IndexType deviceId) {
 }
 
 DeviceGraphImplementation::Vertex DeviceGraphImplementation::vertexFromDeviceId(IndexType deviceId) {
-    return deviceIdVertexMap.at(deviceId);
+    return _deviceIdVertexMap.at(deviceId);
 }
 
 DeviceGraphImplementation::~DeviceGraphImplementation() {}
 
 DeviceGraph::DeviceDescriptions DeviceGraphImplementation::devices() {
     DeviceDescriptions devices;
-    for (auto device : deviceTable) {
+    for (auto device : _deviceTable) {
         auto description = describeDevice(device.second);
         devices.push_back(description);
     }
@@ -132,7 +132,7 @@ DeviceGraph::DeviceDescriptions DeviceGraphImplementation::devices() {
 }
 
 DeviceGraph::DeviceDescription DeviceGraphImplementation::device(IndexType deviceId) {
-    auto device = deviceTable.at(deviceId);
+    auto device = _deviceTable.at(deviceId);
     return describeDevice(device);
 }
 
@@ -147,14 +147,14 @@ DeviceGraph::DeviceDescription DeviceGraphImplementation::describeDevice(DeviceW
 DeviceGraph::AudioConnections DeviceGraphImplementation::audioConnections() {
     AudioConnections result;
     typename Graph::edge_iterator ei_begin, ei_end;
-    tie(ei_begin, ei_end) = edges(graph);
+    tie(ei_begin, ei_end) = edges(_graph);
     for (auto edge = ei_begin; edge != ei_end; ++edge) {
-        if (graph[*edge].type == ConnectionType::AUDIO) {
+        if (_graph[*edge].type == ConnectionType::AUDIO) {
             AudioConnection connection;
-            auto sourceVertex = source(*edge, graph);
-            auto targetVertex = target(*edge, graph);
-            connection.source = graph[sourceVertex].deviceId;
-            connection.target = graph[targetVertex].deviceId;
+            auto sourceVertex = source(*edge, _graph);
+            auto targetVertex = target(*edge, _graph);
+            connection.source = _graph[sourceVertex].deviceId;
+            connection.target = _graph[targetVertex].deviceId;
             result.push_back(connection);
         }
     }
@@ -164,15 +164,15 @@ DeviceGraph::AudioConnections DeviceGraphImplementation::audioConnections() {
 DeviceGraph::ControlConnections DeviceGraphImplementation::controlConnections() {
     ControlConnections result;
     typename Graph::edge_iterator ei_begin, ei_end;
-    tie(ei_begin, ei_end) = edges(graph);
+    tie(ei_begin, ei_end) = edges(_graph);
     for (auto edge = ei_begin; edge != ei_end; ++edge) {
-        if (graph[*edge].type == ConnectionType::CONTROL) {
+        if (_graph[*edge].type == ConnectionType::CONTROL) {
             ControlConnection connection;
-            auto sourceVertex = source(*edge, graph);
-            auto targetVertex = target(*edge, graph);
-            connection.source = graph[sourceVertex].deviceId;
-            connection.target = graph[targetVertex].deviceId;
-            connection.parameterId = graph[*edge].parameterId;
+            auto sourceVertex = source(*edge, _graph);
+            auto targetVertex = target(*edge, _graph);
+            connection.source = _graph[sourceVertex].deviceId;
+            connection.target = _graph[targetVertex].deviceId;
+            connection.parameterId = _graph[*edge].parameterId;
             result.push_back(connection);
         }
     }
@@ -180,11 +180,16 @@ DeviceGraph::ControlConnections DeviceGraphImplementation::controlConnections() 
 }
 
 DataType DeviceGraphImplementation::parameterValue(IndexType deviceId, IndexType parameterId) {
-    return parameterTable->parameterValue(deviceId, parameterId);
+    return _parameterTable->parameterValue(deviceId, parameterId);
 }
 
 void DeviceGraphImplementation::parameterValue(IndexType deviceId, IndexType parameterId, DataType value) {
-    parameterTable->parameterValue(deviceId, parameterId, value);
+    _parameterTable->parameterValue(deviceId, parameterId, value);
+}
+
+DeviceGraphImplementation::DeviceGraphImplementation() {
+    _instanceBuilder = make_shared<InstanceBuilder<Graph, DeviceGraphImplementation, VertexData, EdgeData>>(
+            *this, _graph, *_parameterTable);
 }
 
 DeviceWrapper::DeviceWrapper() {
@@ -214,6 +219,11 @@ DeviceWrapper &DeviceWrapper::operator=(DeviceWrapper wrapper) {
     std::swap(deviceId, wrapper.deviceId);
     std::swap(name, wrapper.name);
     return *this;
+}
+
+bool DeviceGraphImplementation::isOutputDeviceValid() {
+    if (_deviceIdVertexMap.find(_outputDeviceId) == std::end(_deviceIdVertexMap)) return false;
+    return true;
 }
 
 } // namespace itk

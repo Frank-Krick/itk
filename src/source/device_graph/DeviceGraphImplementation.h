@@ -1,12 +1,15 @@
 #ifndef INSTRUMENT_TOOL_KIT_DEVICEGRAPHIMPLEMENTATION_H
 #define INSTRUMENT_TOOL_KIT_DEVICEGRAPHIMPLEMENTATION_H
 
+#include <device_graph/DeviceGraph.h>
+#include <parameter_table/ParameterTable.h>
+
+#include "../parameter_table/ParameterTableImplementation.h"
+#include "instance_builder/InstanceBuilder.h"
+
 #include <unordered_map>
 #include <boost/graph/adjacency_list.hpp>
 
-#include <device_graph/DeviceGraph.h>
-#include <parameter_table/ParameterTable.h>
-#include "../parameter_table/ParameterTableImplementation.h"
 
 namespace itk {
 
@@ -23,8 +26,6 @@ class DeviceWrapper;
 
 class DeviceGraphImplementation : public DeviceGraph {
 public:
-    virtual ~DeviceGraphImplementation();
-
     virtual void connect(IndexType sourceId, IndexType targetId) override;
     virtual void connect(IndexType sourceId, IndexType targetId, IndexType parameterId) override;
     virtual void disconnect(IndexType sourceId, IndexType targetId) override;
@@ -32,9 +33,12 @@ public:
     virtual bool isConnected(IndexType sourceId, IndexType targetId, IndexType parameterId) override;
     virtual AudioConnections audioConnections();
     virtual ControlConnections controlConnections();
+    virtual void outputDeviceId(IndexType deviceId) { _outputDeviceId = deviceId; }
+    virtual IndexType outputDeviceId() { return _outputDeviceId; }
+    virtual bool isOutputDeviceValid();
 
-    virtual DeviceGraphInstance::Ptr createInstance() override;
-    virtual bool isInstanceUpToDate(DeviceGraphInstance &instance) override;
+    virtual Instance::Ptr createInstance(unsigned int bufferSize) override;
+    virtual bool isInstanceUpToDate(Instance &instance) override;
 
     virtual DeviceDescription device(IndexType deviceId) override;
     virtual DeviceDescriptions devices() override;
@@ -52,22 +56,30 @@ public:
      */
     typedef boost::adjacency_list<
             boost::vecS,
-            boost::listS,
+            boost::vecS,
             boost::bidirectionalS,
             VertexData, EdgeData> Graph;
 
-private:
     typedef Graph::vertex_descriptor Vertex;
     typedef Graph::edge_descriptor Edge;
+
+    DeviceGraphImplementation();
+    virtual ~DeviceGraphImplementation();
+
+    Vertex vertexFromDeviceId(IndexType deviceId);
+
+    InstanceBuilder<Graph, DeviceGraphImplementation, VertexData, EdgeData>::Ptr _instanceBuilder;
+
+private:
     typedef std::unordered_map<IndexType, DeviceWrapper> DeviceTable;
     typedef std::unordered_map<IndexType, Graph::vertex_descriptor> DeviceIdVertexMap;
 
-    DeviceTable deviceTable;
-    DeviceIdVertexMap deviceIdVertexMap;
-    Graph graph;
-    ParameterTable::Ptr parameterTable = std::make_shared<ParameterTableImplementation>();
+    IndexType _outputDeviceId = 0;
+    DeviceTable _deviceTable;
+    DeviceIdVertexMap _deviceIdVertexMap;
+    Graph _graph;
+    ParameterTable::Ptr _parameterTable = std::make_shared<ParameterTableImplementation>();
 
-    Vertex vertexFromDeviceId(IndexType deviceId);
     DeviceDescription describeDevice(DeviceWrapper& device);
 };
 
