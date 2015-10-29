@@ -181,7 +181,8 @@ BOOST_AUTO_TEST_CASE( device_graph_with_one_audio_and_one_control_device ) {
     OutputChannels beginIt = {begin(actualLeft), begin(actualRight)};
     OutputChannels endIt = {end(actualLeft), end(actualRight)};
     (*instance)(beginIt, endIt);
-    BOOST_CHECK(1 == 2);
+    BOOST_CHECK(equal(begin(expectedLeft), end(expectedLeft), begin(actualLeft)));
+    BOOST_CHECK(equal(begin(expectedRight), end(expectedRight), begin(actualRight)));
 }
 
 BOOST_AUTO_TEST_SUITE_END()
